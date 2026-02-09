@@ -16,7 +16,7 @@ export default function Universe2D({
 }: Universe2DProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hoveredCareer, setHoveredCareer] = useState<string | null>(null);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
