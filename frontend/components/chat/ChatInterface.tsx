@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { ConversationMessage } from '@/types';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
@@ -194,63 +195,189 @@ export default function ChatInterface({
                 <div
                   className="group relative"
                   style={{
-                    maxWidth: 'min(70%, 600px)',
+                    maxWidth: 'min(75%, 600px)',
                     minWidth: '80px',
                   }}
                 >
                   {/* 발신자 라벨 */}
                   <p
-                    className={`text-xs mb-1.5 font-medium ${isUser ? 'text-right' : 'text-left'}`}
-                    style={{ color: '#FFFFFF' }}
+                    className={`text-xs mb-2 font-medium ${isUser ? 'text-right' : 'text-left'}`}
+                    style={{ color: 'rgba(255, 255, 255, 0.7)' }}
                   >
                     {isUser ? '나 🚀' : '패스파인더 🌌'}
                   </p>
 
                   <div
-                    className="relative"
+                    className={`relative ${
+                      isUser ? 'rounded-3xl rounded-tr-none' : 'rounded-3xl rounded-tl-none'
+                    }`}
                     style={{
-                      borderRadius: '20px',
-                      padding: '16px 24px',
+                      padding: '16px 20px',
                       background: isUser
-                        ? 'rgba(0, 122, 255, 0.18)'
-                        : 'rgba(255, 255, 255, 0.08)',
-                      border: `1px solid ${
-                        isUser
-                          ? 'rgba(0, 122, 255, 0.25)'
-                          : 'rgba(255, 255, 255, 0.10)'
-                      }`,
-                      backdropFilter: 'blur(16px)',
+                        ? 'linear-gradient(135deg, rgb(99, 102, 241), rgb(139, 92, 246))'
+                        : 'rgba(255, 255, 255, 0.1)',
+                      border: isUser
+                        ? 'none'
+                        : '1px solid rgba(255, 255, 255, 0.2)',
+                      backdropFilter: 'blur(20px)',
                       boxShadow: isUser
-                        ? '0 8px 24px rgba(0, 122, 255, 0.1)'
-                        : '0 8px 24px rgba(0, 0, 0, 0.2)',
+                        ? '0 8px 32px rgba(99, 102, 241, 0.25)'
+                        : '0 8px 32px rgba(0, 0, 0, 0.15)',
                     }}
                   >
                     {/* 음성 입력 배지 */}
                     {message.input_method === 'voice' && isUser && (
                       <span
-                        className="text-xs mb-1.5 block font-medium"
-                        style={{ color: 'rgba(90, 200, 250, 0.8)' }}
+                        className="text-xs mb-2 block font-medium opacity-80"
+                        style={{ color: 'rgba(255, 255, 255, 0.9)' }}
                       >
                         🎤 음성 입력
                       </span>
                     )}
 
-                    {/* 메시지 내용 — 반드시 white */}
-                    <p
-                      className="whitespace-pre-wrap break-words leading-relaxed"
+                    {/* 메시지 내용 — 마크다운 렌더링 */}
+                    <div
+                      className="break-words"
                       style={{
                         color: '#FFFFFF',
                         fontSize: '15px',
                         lineHeight: '1.7',
-                        textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                       }}
                     >
-                      {message.content}
-                    </p>
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => (
+                            <p style={{ margin: '0 0 10px 0', color: '#FFFFFF' }}>{children}</p>
+                          ),
+                          strong: ({ children }) => (
+                            <strong
+                              style={{
+                                fontWeight: '600',
+                                color: '#FFFFFF',
+                                letterSpacing: '0.01em',
+                              }}
+                            >
+                              {children}
+                            </strong>
+                          ),
+                          em: ({ children }) => (
+                            <em
+                              style={{
+                                fontStyle: 'italic',
+                                color: 'rgba(255, 255, 255, 0.95)',
+                              }}
+                            >
+                              {children}
+                            </em>
+                          ),
+                          ul: ({ children }) => (
+                            <ul
+                              style={{
+                                margin: '10px 0',
+                                paddingLeft: '24px',
+                                color: '#FFFFFF',
+                                listStyleType: 'disc',
+                              }}
+                            >
+                              {children}
+                            </ul>
+                          ),
+                          ol: ({ children }) => (
+                            <ol
+                              style={{
+                                margin: '10px 0',
+                                paddingLeft: '24px',
+                                color: '#FFFFFF',
+                                listStyleType: 'decimal',
+                              }}
+                            >
+                              {children}
+                            </ol>
+                          ),
+                          li: ({ children }) => (
+                            <li
+                              style={{
+                                margin: '6px 0',
+                                color: '#FFFFFF',
+                                lineHeight: '1.6',
+                              }}
+                            >
+                              {children}
+                            </li>
+                          ),
+                          code: ({ children }) => (
+                            <code
+                              style={{
+                                background: 'rgba(0, 0, 0, 0.25)',
+                                padding: '3px 8px',
+                                borderRadius: '6px',
+                                fontSize: '14px',
+                                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+                                color: '#FFFFFF',
+                                fontWeight: '500',
+                              }}
+                            >
+                              {children}
+                            </code>
+                          ),
+                          blockquote: ({ children }) => (
+                            <blockquote
+                              style={{
+                                borderLeft: '3px solid rgba(255, 255, 255, 0.3)',
+                                paddingLeft: '16px',
+                                margin: '12px 0',
+                                color: 'rgba(255, 255, 255, 0.9)',
+                                fontStyle: 'italic',
+                              }}
+                            >
+                              {children}
+                            </blockquote>
+                          ),
+                          h1: ({ children }) => (
+                            <h1
+                              style={{
+                                fontSize: '18px',
+                                fontWeight: '600',
+                                margin: '12px 0 8px 0',
+                                color: '#FFFFFF',
+                              }}
+                            >
+                              {children}
+                            </h1>
+                          ),
+                          h2: ({ children }) => (
+                            <h2
+                              style={{
+                                fontSize: '16px',
+                                fontWeight: '600',
+                                margin: '10px 0 6px 0',
+                                color: '#FFFFFF',
+                              }}
+                            >
+                              {children}
+                            </h2>
+                          ),
+                          h3: ({ children }) => (
+                            <h3
+                              style={{
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                margin: '8px 0 4px 0',
+                                color: '#FFFFFF',
+                              }}
+                            >
+                              {children}
+                            </h3>
+                          ),
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
 
                     {/* 하단: 시간 + TTS */}
-                    <div className="flex items-center justify-between mt-2 gap-2">
-                      <p className="text-xs" style={{ color: '#FFFFFF' }}>
+                    <div className="flex items-center justify-between mt-3 gap-2 pt-2 border-t border-white/10">
+                      <p className="text-xs opacity-70" style={{ color: '#FFFFFF' }}>
                         {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -261,14 +388,14 @@ export default function ChatInterface({
                       {!isUser && isTTSSupported && (
                         <button
                           onClick={() => handleSpeakMessage(message.content)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2 py-0.5 rounded-full"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-3 py-1 rounded-full hover:bg-white/10"
                           style={{
                             color: '#FFFFFF',
-                            background: 'rgba(255,255,255,0.06)',
+                            background: 'rgba(255,255,255,0.08)',
                           }}
                           title="읽어주기"
                         >
-                          {isSpeaking ? '⏹️ 멈추기' : '🔊 읽어주기'}
+                          {isSpeaking ? '⏹️' : '🔊'}
                         </button>
                       )}
                     </div>
@@ -291,12 +418,12 @@ export default function ChatInterface({
                 🤖
               </div>
               <div
+                className="rounded-3xl rounded-tl-none"
                 style={{
-                  borderRadius: '20px',
-                  padding: '16px 24px',
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  border: '1px solid rgba(255,255,255,0.10)',
-                  backdropFilter: 'blur(16px)',
+                  padding: '16px 20px',
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(20px)',
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -335,12 +462,12 @@ export default function ChatInterface({
                 🎙️
               </div>
               <div
+                className="rounded-3xl rounded-tr-none"
                 style={{
-                  borderRadius: '20px',
-                  padding: '14px 24px',
-                  background: 'rgba(255, 59, 48, 0.08)',
-                  border: '1px solid rgba(255,59,48,0.20)',
-                  backdropFilter: 'blur(16px)',
+                  padding: '14px 20px',
+                  background: 'rgba(255, 59, 48, 0.1)',
+                  border: '1px solid rgba(255,59,48,0.25)',
+                  backdropFilter: 'blur(20px)',
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -359,26 +486,26 @@ export default function ChatInterface({
 
       {/* ── Input Area ── */}
       <div
-        className="shrink-0 px-4 sm:px-8 py-4"
+        className="shrink-0 px-4 sm:px-6 py-5"
         style={{
-          background: 'rgba(10, 14, 26, 0.7)',
+          background: 'rgba(10, 14, 26, 0.6)',
           borderTop: '1px solid rgba(255,255,255,0.08)',
           backdropFilter: 'blur(20px)',
         }}
       >
-        <div className="flex items-center" style={{ gap: '12px' }}>
-          {/* 음성 입력 버튼 — 48px 통일 */}
+        <div className="flex items-center gap-3 max-w-4xl mx-auto">
+          {/* 음성 입력 버튼 */}
           {isSTTSupported && (
             <button
               onClick={handleVoiceToggle}
               disabled={loading}
-              className="shrink-0 flex items-center justify-center transition-all"
+              className="shrink-0 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
               style={{
-                width: '48px',
-                height: '48px',
-                borderRadius: '16px',
-                background: isListening ? 'rgba(255, 59, 48, 0.2)' : 'rgba(255,255,255,0.06)',
-                border: `1px solid ${isListening ? 'rgba(255,59,48,0.3)' : 'rgba(255,255,255,0.10)'}`,
+                width: '44px',
+                height: '44px',
+                borderRadius: '12px',
+                background: isListening ? 'rgba(255, 59, 48, 0.2)' : 'rgba(255,255,255,0.08)',
+                border: `1px solid ${isListening ? 'rgba(255,59,48,0.3)' : 'rgba(255,255,255,0.12)'}`,
                 color: isListening ? '#FF3B30' : '#FFFFFF',
               }}
               title={isListening ? '음성 인식 중지' : '음성 입력 🎤'}
@@ -398,7 +525,7 @@ export default function ChatInterface({
             </button>
           )}
 
-          {/* 텍스트 입력 — 48px 통일 */}
+          {/* 텍스트 입력 — 캡슐 모양 */}
           <input
             ref={inputRef}
             type="text"
@@ -408,42 +535,57 @@ export default function ChatInterface({
             placeholder={
               isListening
                 ? t('conversation.voice.speaking') || '말씀하세요... 🎤'
-                : (t('conversation.input.placeholder') || '메시지를 입력하세요') + ' ✨'
+                : t('conversation.input.placeholder') || '메시지를 입력하세요'
             }
             disabled={loading}
-            className="flex-1 transition-all outline-none"
+            className="flex-1 transition-all outline-none focus:ring-2 focus:ring-indigo-500/50"
             style={{
               height: '48px',
-              borderRadius: '16px',
-              padding: '0 20px',
-              background: 'rgba(255,255,255,0.06)',
-              border: `1px solid ${isListening ? 'rgba(255,59,48,0.2)' : 'rgba(255,255,255,0.10)'}`,
+              borderRadius: '9999px',
+              padding: '0 24px',
+              background: 'rgba(255,255,255,0.1)',
+              border: `1px solid ${isListening ? 'rgba(255,59,48,0.3)' : 'rgba(255,255,255,0.15)'}`,
               color: '#FFFFFF',
               fontSize: '15px',
               backdropFilter: 'blur(12px)',
             }}
           />
 
-          {/* 전송 버튼 — 48px 통일 */}
+          {/* 전송 버튼 — 비행기 아이콘 */}
           <button
             onClick={() => sendMessage()}
             disabled={!(input.trim() || transcript) || loading}
-            className="shrink-0 text-sm font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            className="shrink-0 flex items-center justify-center transition-all disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
             style={{
+              width: '48px',
               height: '48px',
-              borderRadius: '16px',
-              padding: '0 24px',
+              borderRadius: '9999px',
               background: (input.trim() || transcript) && !loading
-                ? 'linear-gradient(135deg, #007AFF, #5856D6)'
-                : 'rgba(255,255,255,0.06)',
+                ? 'linear-gradient(135deg, rgb(99, 102, 241), rgb(139, 92, 246))'
+                : 'rgba(255,255,255,0.08)',
+              border: (input.trim() || transcript) && !loading
+                ? 'none'
+                : '1px solid rgba(255,255,255,0.12)',
               color: '#FFFFFF',
-              border: '1px solid rgba(255,255,255,0.10)',
               boxShadow: (input.trim() || transcript) && !loading
-                ? '0 4px 16px rgba(0, 122, 255, 0.3)'
+                ? '0 4px 20px rgba(99, 102, 241, 0.4)'
                 : 'none',
             }}
+            title="보내기"
           >
-            보내기 🚀
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
           </button>
         </div>
       </div>
