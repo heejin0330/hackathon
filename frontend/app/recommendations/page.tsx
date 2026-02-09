@@ -142,18 +142,31 @@ export default function RecommendationsPage() {
       {/* 모바일 앱 느낌의 고정 너비 컨테이너 */}
       <div className="relative z-10 w-full mx-auto px-5 py-6 pb-24" style={{ maxWidth: '480px' }}>
         {/* 헤더 */}
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold mb-1 tracking-tight" style={{ color: '#F5EFFF' }}>
+        <div className="text-center mb-8" style={{ marginBottom: '32px' }}>
+          <h1 className="text-2xl font-bold mb-2 tracking-tight" style={{ color: '#F5EFFF' }}>
             {t('recommendations.title')}
           </h1>
-          <p className="text-xs" style={{ color: '#F5EFFF' }}>
+          <p className="text-xs" style={{ color: '#F5EFFF', opacity: 0.8 }}>
             {t('recommendations.subtitle', { count: recommendations.length })}
           </p>
         </div>
 
-        {/* 1열 카드 리스트 */}
-        <div className="flex flex-col gap-4 mb-6">
-          {recommendations.map((recommendation) => (
+        {/* 우주 설명 */}
+        <div className="glass-hero rounded-2xl px-6 py-5 shadow-2xl mb-6" style={{ marginBottom: '24px' }}>
+          <div className="flex items-center gap-3 mb-3">
+            <span style={{ fontSize: '24px' }}>🌌</span>
+            <h2 className="text-base font-semibold" style={{ color: '#F5EFFF' }}>
+              {t('universe.title') || '당신의 우주'}
+            </h2>
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: '#F5EFFF', opacity: 0.9 }}>
+            {t('universe.description') || '중앙의 태양은 당신이고, 주변의 행성들은 진로 경로입니다. 각 행성을 클릭하여 상세 정보를 확인하세요.'}
+          </p>
+        </div>
+
+        {/* 1열 카드 리스트 - 우주 행성 형태 */}
+        <div className="flex flex-col gap-6 mb-8" style={{ gap: '24px', marginBottom: '32px' }}>
+          {recommendations.map((recommendation, index) => (
             <CareerCard
               key={recommendation.recommendation_id}
               recommendation={recommendation}
@@ -164,11 +177,17 @@ export default function RecommendationsPage() {
         </div>
 
         {/* 커스텀 진로 추가 */}
-        <div className="glass-hero rounded-2xl px-5 py-5 shadow-2xl mb-6">
-          <h2 className="text-sm font-semibold mb-1" style={{ color: '#F5EFFF' }}>
+        <div
+          className="glass-hero rounded-2xl shadow-2xl mb-8"
+          style={{
+            padding: '20px',
+            marginBottom: '32px',
+          }}
+        >
+          <h2 className="text-sm font-semibold mb-2" style={{ color: '#F5EFFF', marginBottom: '8px' }}>
             💡 {t('recommendations.custom.title')}
           </h2>
-          <p className="text-xs mb-4" style={{ color: '#F5EFFF' }}>
+          <p className="text-xs mb-4 leading-relaxed" style={{ color: '#F5EFFF', opacity: 0.9, marginBottom: '16px' }}>
             {t('recommendations.custom.description')}
           </p>
 
@@ -215,12 +234,17 @@ export default function RecommendationsPage() {
       {selectedCareers.size > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-20">
           <div className="w-full mx-auto px-5 pb-5" style={{ maxWidth: '480px' }}>
-            <div className="glass-hero rounded-2xl px-5 py-3 shadow-2xl flex items-center justify-between">
+            <div
+              className="glass-hero rounded-2xl shadow-2xl flex items-center justify-between"
+              style={{
+                padding: '16px 20px',
+              }}
+            >
               <p className="text-xs" style={{ color: '#F5EFFF' }}>
                 <span className="font-semibold" style={{ color: '#F5EFFF' }}>{selectedCareers.size}</span>
                 {' '}{t('recommendations.selected', { count: selectedCareers.size })}
               </p>
-              <button onClick={handleContinue} className="btn-primary text-xs px-5 py-2">
+              <button onClick={handleContinue} className="btn-primary text-xs px-5 py-2.5">
                 {t('recommendations.view')}
               </button>
             </div>
