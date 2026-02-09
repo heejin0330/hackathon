@@ -74,97 +74,108 @@ export default function VisionBoardPage() {
             <p className="text-xs" style={{ color: '#F5EFFF' }}>{careerName}</p>
           </div>
 
-          {/* 비전 보드 카드 */}
-          <div className="glass-hero rounded-3xl overflow-hidden shadow-2xl mb-6">
-            {/* 비전 헤더 */}
-            <div
-              className="px-5 py-6 text-center"
+          {/* 비전 보드 이미지 형식 카드 */}
+          <div 
+            className="rounded-3xl overflow-hidden shadow-2xl mb-6 relative"
+            style={{
+              aspectRatio: style === 'id_badge' ? '2/3' : '3/4',
+              background:
+                style === 'id_badge'
+                  ? 'linear-gradient(135deg, #1a365d 0%, #2563eb 50%, #1e40af 100%)'
+                  : style === 'magazine_cover'
+                  ? 'linear-gradient(135deg, #831843 0%, #ec4899 50%, #be185d 100%)'
+                  : 'linear-gradient(135deg, #713f12 0%, #f59e0b 50%, #d97706 100%)',
+              position: 'relative',
+              minHeight: '600px',
+            }}
+          >
+            {/* 배경 패턴 효과 */}
+            <div 
+              className="absolute inset-0 opacity-10"
               style={{
-                background:
-                  style === 'id_badge'
-                    ? 'linear-gradient(135deg, #1a365d 0%, #2563eb 100%)'
-                    : style === 'magazine_cover'
-                    ? 'linear-gradient(135deg, #831843 0%, #ec4899 100%)'
-                    : 'linear-gradient(135deg, #713f12 0%, #f59e0b 100%)',
+                backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
               }}
-            >
-              <p className="text-xs mb-1" style={{ color: '#F5EFFF' }}>{visionData.year}</p>
-              <h2 className="text-lg font-bold mb-1" style={{ color: '#F5EFFF' }}>{visionData.title}</h2>
-              <p className="text-sm" style={{ color: '#F5EFFF' }}>
-                {visionData.role} @ {visionData.company}
-              </p>
-            </div>
-
-            {/* 본문 */}
-            <div className="px-5 py-5 space-y-5">
-              {/* 설명 */}
-              <p className="text-sm leading-relaxed" style={{ color: '#F5EFFF' }}>{visionData.description}</p>
-
-              {/* 인용구 */}
-              <div
-                className="text-center px-4 py-4 rounded-xl"
-                style={{ background: 'rgba(255, 255, 255, 0.04)' }}
-              >
-                <p className="text-sm italic leading-relaxed" style={{ color: '#F5EFFF' }}>
-                  &ldquo;{visionData.quote}&rdquo;
+            />
+            
+            {/* 메인 콘텐츠 */}
+            <div className="relative z-10 h-full flex flex-col p-6">
+              {/* 상단 헤더 */}
+              <div className="text-center mb-6">
+                <p className="text-sm mb-2 font-semibold" style={{ color: '#F5EFFF', opacity: 0.9 }}>{visionData.year}</p>
+                <h2 className="text-2xl font-bold mb-2" style={{ color: '#F5EFFF', textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+                  {visionData.title}
+                </h2>
+                <p className="text-base font-medium" style={{ color: '#F5EFFF', opacity: 0.95 }}>
+                  {visionData.role}
+                </p>
+                <p className="text-sm mt-1" style={{ color: '#F5EFFF', opacity: 0.85 }}>
+                  @ {visionData.company}
                 </p>
               </div>
 
-              {/* 성과 */}
-              <div>
-                <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF' }}>🏅 주요 성과</h3>
-                <div className="space-y-2">
-                  {visionData.achievements.map((achievement, i) => (
-                    <div
-                      key={i}
-                      className="flex items-start gap-2 text-xs"
-                      style={{ color: '#F5EFFF' }}
-                    >
-                      <span className="text-[#007AFF] mt-0.5">•</span>
-                      <span className="leading-relaxed">{achievement}</span>
-                    </div>
-                  ))}
+              {/* 중앙 설명 */}
+              <div className="flex-1 flex flex-col justify-center mb-4">
+                <p className="text-sm leading-relaxed text-center mb-4" style={{ color: '#F5EFFF', opacity: 0.95 }}>
+                  {visionData.description}
+                </p>
+
+                {/* 인용구 - 강조 */}
+                <div
+                  className="text-center px-4 py-4 rounded-xl mb-4"
+                  style={{ 
+                    background: 'rgba(255, 255, 255, 0.15)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                  }}
+                >
+                  <p className="text-base italic leading-relaxed font-medium" style={{ color: '#F5EFFF' }}>
+                    &ldquo;{visionData.quote}&rdquo;
+                  </p>
                 </div>
               </div>
 
-              {/* 마일스톤 타임라인 */}
-              <div>
-                <h3 className="text-xs font-semibold mb-3" style={{ color: '#F5EFFF' }}>📍 성장 타임라인</h3>
-                <div className="relative pl-4 space-y-3">
-                  {/* 타임라인 라인 */}
-                  <div
-                    className="absolute left-[5px] top-1 bottom-1 w-px"
-                    style={{ background: 'rgba(0, 100, 255, 0.3)' }}
-                  />
-                  {visionData.milestones.map((milestone, i) => (
-                    <div key={i} className="relative flex items-start gap-3">
-                      {/* 타임라인 dot */}
+              {/* 하단 정보 섹션 */}
+              <div className="space-y-3 mt-auto">
+                {/* 성과 - 컴팩트하게 */}
+                <div>
+                  <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF', opacity: 0.9 }}>🏅 주요 성과</h3>
+                  <div className="space-y-1">
+                    {visionData.achievements.slice(0, 3).map((achievement, i) => (
                       <div
-                        className="absolute -left-4 top-1 w-2.5 h-2.5 rounded-full border-2"
-                        style={{
-                          borderColor: '#007AFF',
-                          background: i === visionData.milestones.length - 1
-                            ? '#007AFF'
-                            : 'rgba(0, 10, 30, 0.8)',
+                        key={i}
+                        className="flex items-start gap-2 text-xs"
+                        style={{ color: '#F5EFFF', opacity: 0.9 }}
+                      >
+                        <span className="text-white font-bold mt-0.5">•</span>
+                        <span className="leading-relaxed">{achievement}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 마일스톤 - 간단하게 */}
+                <div>
+                  <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF', opacity: 0.9 }}>📍 성장 타임라인</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {visionData.milestones.slice(0, 3).map((milestone, i) => (
+                      <div 
+                        key={i} 
+                        className="px-2 py-1 rounded-lg"
+                        style={{ 
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
                         }}
-                      />
-                      <div>
-                        <p className="text-[10px] font-semibold text-[#007AFF]">
+                      >
+                        <p className="text-[10px] font-semibold" style={{ color: '#F5EFFF' }}>
                           {milestone.year}
                         </p>
-                        <p className="text-xs leading-relaxed" style={{ color: '#F5EFFF' }}>
-                          {milestone.event}
+                        <p className="text-[10px] leading-tight" style={{ color: '#F5EFFF', opacity: 0.85 }}>
+                          {milestone.event.length > 20 ? milestone.event.substring(0, 20) + '...' : milestone.event}
                         </p>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* 일상 */}
-              <div>
-                <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF' }}>☀️ 하루 일과</h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#F5EFFF' }}>{visionData.daily_life}</p>
               </div>
             </div>
           </div>

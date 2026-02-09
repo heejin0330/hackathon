@@ -174,6 +174,16 @@ export default function ChatInterface({
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setLoading(true);
+    
+    // 메시지 전송 후 즉시 입력창에 포커스 (다음 메시지 입력 준비)
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 50);
+    
+    // 메시지 전송 후 즉시 입력창에 포커스
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
 
     try {
       const { apiClient } = await import('@/lib/api/client');
@@ -221,7 +231,10 @@ export default function ChatInterface({
             
             // 로딩 상태 해제
             setLoading(false);
-            inputRef.current?.focus();
+            // AI 응답 완료 후 입력창에 포커스 (약간의 딜레이로 자연스럽게)
+            setTimeout(() => {
+              inputRef.current?.focus();
+            }, 150);
           }
         }, delay);
       }
@@ -229,7 +242,10 @@ export default function ChatInterface({
       // 세그먼트가 1개인 경우 즉시 로딩 해제
       if (segments.length === 1) {
         setLoading(false);
-        inputRef.current?.focus();
+        // 즉시 포커스
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 150);
       }
 
       // 대화 완료 체크 (0.95 이상일 때만 완료로 간주)
@@ -244,7 +260,10 @@ export default function ChatInterface({
       setMessages((prev) => prev.filter((msg) => msg.message_id !== userMessage.message_id));
       alert(error.message || '메시지 전송에 실패했습니다');
       setLoading(false);
-      inputRef.current?.focus();
+      // 에러 발생 시에도 입력창에 포커스
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   }, [input, loading, sessionId, onProgressUpdate, onComplete, autoSpeak, isTTSSupported, speak, stripMarkdown, splitIntoSegments]);
 

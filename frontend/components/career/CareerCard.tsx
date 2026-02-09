@@ -18,135 +18,147 @@ export default function CareerCard({
   const { t } = useLanguage();
   const [showDetails, setShowDetails] = useState(false);
 
+  // Vision Board 스타일 선택 (진로별로 다른 스타일)
+  const getVisionStyle = () => {
+    const index = parseInt(recommendation.recommendation_id.split('_').pop() || '0', 36) % 3;
+    return index === 0 ? 'magazine_cover' : index === 1 ? 'id_badge' : 'achievement';
+  };
+
+  const visionStyle = getVisionStyle();
+  const gradientColors = {
+    id_badge: 'linear-gradient(135deg, #1a365d 0%, #2563eb 50%, #1e40af 100%)',
+    magazine_cover: 'linear-gradient(135deg, #831843 0%, #ec4899 50%, #be185d 100%)',
+    achievement: 'linear-gradient(135deg, #713f12 0%, #f59e0b 50%, #d97706 100%)',
+  };
+
   return (
     <div
-      className={`glass-hero rounded-2xl shadow-2xl transition-all ${
+      className={`rounded-3xl overflow-hidden shadow-2xl transition-all relative ${
         selected ? 'ring-2 ring-[#007AFF] shadow-[0_0_40px_rgba(0,122,255,0.4)]' : ''
       }`}
       style={{
-        padding: '24px',
+        aspectRatio: visionStyle === 'id_badge' ? '2/3' : '3/4',
+        background: gradientColors[visionStyle],
+        minHeight: '500px',
         marginBottom: '24px',
       }}
     >
-      {/* 행성 헤더 */}
-      <div className="flex items-start justify-between mb-5" style={{ marginBottom: '20px' }}>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-            style={{
-              background: selected
-                ? 'linear-gradient(135deg, rgba(0, 122, 255, 0.3), rgba(0, 122, 255, 0.1))'
-                : 'rgba(255, 255, 255, 0.1)',
-              border: selected
-                ? '2px solid rgba(0, 122, 255, 0.5)'
-                : '1px solid rgba(255, 255, 255, 0.2)',
-              boxShadow: selected
-                ? '0 0 20px rgba(0, 122, 255, 0.4)'
-                : '0 4px 12px rgba(0, 0, 0, 0.2)',
-            }}
-          >
-            {selected ? '⭐' : '🪐'}
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-1" style={{ color: '#F5EFFF' }}>
-              {recommendation.career_name}
-            </h3>
-            {recommendation.is_custom && (
-              <span
-                className="px-2 py-1 text-xs rounded-full"
-                style={{
-                  background: 'rgba(255, 193, 7, 0.2)',
-                  color: '#FFD700',
-                  border: '1px solid rgba(255, 193, 7, 0.3)',
-                }}
-              >
-                {t('career.custom')}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* 설명 */}
-      <p className="mb-5 text-sm leading-relaxed" style={{ color: '#F5EFFF', opacity: 0.9, marginBottom: '20px' }}>
-        {recommendation.description}
-      </p>
-
-      {/* 추천 이유 */}
-      <div className="mb-5" style={{ marginBottom: '20px' }}>
-        <p className="text-sm font-semibold mb-2" style={{ color: '#F5EFFF' }}>
-          {t('career.why')}
-        </p>
-        <p className="text-sm leading-relaxed" style={{ color: '#F5EFFF', opacity: 0.85 }}>
-          {recommendation.match_reason}
-        </p>
-      </div>
-
-      {/* 필요한 스킬 - 능력별 분류 */}
-      <div className="mb-5" style={{ marginBottom: '20px' }}>
-        <p className="text-sm font-semibold mb-3" style={{ color: '#F5EFFF' }}>
-          {t('career.skills') || '필요한 스킬'}
-        </p>
-        <div className="space-y-3" style={{ gap: '12px' }}>
-          {/* 스킬을 능력별로 그룹화하여 표시 */}
-          {recommendation.skills_needed.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {recommendation.skills_needed.map((skill, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1.5 text-xs rounded-full"
-                  style={{
-                    background: 'rgba(99, 102, 241, 0.2)',
-                    color: '#F5EFFF',
-                    border: '1px solid rgba(99, 102, 241, 0.3)',
-                  }}
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs" style={{ color: '#F5EFFF', opacity: 0.7 }}>
-              스킬 정보가 없습니다
+      {/* 배경 패턴 효과 */}
+      <div 
+        className="absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+        }}
+      />
+      
+      {/* 메인 콘텐츠 */}
+      <div className="relative z-10 h-full flex flex-col p-6">
+        {/* 상단 헤더 */}
+        <div className="text-center mb-4">
+          <p className="text-xs mb-2 font-semibold" style={{ color: '#F5EFFF', opacity: 0.9 }}>2040</p>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: '#F5EFFF', textShadow: '0 2px 10px rgba(0,0,0,0.3)' }}>
+            {recommendation.career_name}
+          </h3>
+          {recommendation.is_custom && (
+            <span
+              className="inline-block px-2 py-1 text-xs rounded-full mb-2"
+              style={{
+                background: 'rgba(255, 193, 7, 0.3)',
+                color: '#FFD700',
+                border: '1px solid rgba(255, 193, 7, 0.5)',
+              }}
+            >
+              {t('career.custom')}
+            </span>
+          )}
+          {recommendation.example_jobs[0] && (
+            <p className="text-sm mt-1" style={{ color: '#F5EFFF', opacity: 0.85 }}>
+              {recommendation.example_jobs[0]}
             </p>
           )}
         </div>
-      </div>
 
-      {/* 버튼 영역 */}
-      <div className="flex gap-3 mb-4" style={{ gap: '12px', marginBottom: '16px' }}>
-        <button
-          onClick={() => setShowDetails(!showDetails)}
-          className="flex-1 px-4 py-2.5 rounded-full text-sm font-medium transition-all"
-          style={{
-            background: 'rgba(255, 255, 255, 0.08)',
-            color: '#F5EFFF',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-          }}
-        >
-          {showDetails ? t('career.hide') : t('career.details')}
-        </button>
-        {onSelect && (
-          <button
-            onClick={() => onSelect(recommendation.recommendation_id)}
-            className={`flex-1 px-4 py-2.5 rounded-full transition-all text-sm font-semibold ${
-              selected
-                ? 'btn-primary'
-                : ''
-            }`}
-            style={
-              !selected
-                ? {
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    color: '#F5EFFF',
-                    border: '1px solid rgba(255, 255, 255, 0.15)',
-                  }
-                : {}
-            }
+        {/* 중앙 설명 */}
+        <div className="flex-1 flex flex-col justify-center mb-4">
+          <p className="text-sm leading-relaxed text-center mb-3" style={{ color: '#F5EFFF', opacity: 0.95 }}>
+            {recommendation.description}
+          </p>
+
+          {/* 추천 이유 - 인용구 형식 */}
+          <div
+            className="text-center px-4 py-3 rounded-xl mb-3"
+            style={{ 
+              background: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
           >
-            {selected ? `✓ ${t('button.selected')}` : t('button.select')}
-          </button>
-        )}
+            <p className="text-xs italic leading-relaxed font-medium" style={{ color: '#F5EFFF' }}>
+              &ldquo;{recommendation.match_reason.substring(0, 80)}{recommendation.match_reason.length > 80 ? '...' : ''}&rdquo;
+            </p>
+          </div>
+        </div>
+
+        {/* 하단 정보 섹션 */}
+        <div className="space-y-2 mt-auto">
+          {/* 스킬 - 컴팩트하게 */}
+          {recommendation.skills_needed.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-semibold mb-1" style={{ color: '#F5EFFF', opacity: 0.9 }}>
+                {t('career.skills') || '필요한 스킬'}
+              </h4>
+              <div className="flex flex-wrap gap-1">
+                {recommendation.skills_needed.slice(0, 3).map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-0.5 text-[10px] rounded-lg"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      color: '#F5EFFF',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                    }}
+                  >
+                    {skill.length > 8 ? skill.substring(0, 8) + '...' : skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 버튼 영역 */}
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={() => setShowDetails(!showDetails)}
+              className="flex-1 px-3 py-2 rounded-lg text-xs font-medium transition-all"
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: '#F5EFFF',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+              }}
+            >
+              {showDetails ? t('career.hide') : t('career.details')}
+            </button>
+            {onSelect && (
+              <button
+                onClick={() => onSelect(recommendation.recommendation_id)}
+                className={`flex-1 px-3 py-2 rounded-lg transition-all text-xs font-semibold ${
+                  selected ? 'btn-primary' : ''
+                }`}
+                style={
+                  !selected
+                    ? {
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        color: '#F5EFFF',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                      }
+                    : {}
+                }
+              >
+                {selected ? `✓ ${t('button.selected')}` : t('button.select')}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 상세 정보 */}

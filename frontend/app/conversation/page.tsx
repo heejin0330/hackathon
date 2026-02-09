@@ -161,37 +161,46 @@ export default function ConversationPage() {
                 {Math.round(progress * 100)}%
               </span>
               {/* 배경 박스 제거, 진행 바만 표시 */}
-              <div className="flex-1 h-3 relative">
+              <div className="flex-1 h-5 relative overflow-visible" style={{ minHeight: '20px', position: 'relative' }}>
                 {/* 광선검처럼 글로우 효과가 있는 진행 바 */}
                 <div
-                  className="h-full rounded-full transition-all duration-500 ease-out relative"
+                  className="h-full rounded-full transition-all duration-500 ease-out absolute top-0 left-0"
                   style={{
-                    width: `${progress * 100}%`,
+                    width: `${Math.max(progress * 100, 2)}%`, // 최소 2% 너비
+                    minWidth: progress > 0 ? '8px' : '0px', // progress가 0보다 크면 최소 8px
+                    height: '100%',
                     background: progress >= 0.8
                       ? 'linear-gradient(90deg, #FFD700, #FFA500, #FFD700)'
                       : progress >= 0.6
                       ? 'linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50)'
                       : progress >= 0.4
                       ? 'linear-gradient(90deg, #2196F3, #03A9F4, #2196F3)'
-                      : 'linear-gradient(90deg, #9C27B0, #E91E63, #9C27B0)',
+                      : progress > 0
+                      ? 'linear-gradient(90deg, #9C27B0, #E91E63, #9C27B0)'
+                      : 'transparent',
                     boxShadow: progress >= 0.8
-                      ? '0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 165, 0, 0.6), 0 0 60px rgba(255, 215, 0, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3)'
+                      ? '0 0 25px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 165, 0, 0.8), 0 0 75px rgba(255, 215, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4)'
                       : progress >= 0.6
-                      ? '0 0 20px rgba(76, 175, 80, 0.8), 0 0 40px rgba(139, 195, 74, 0.6), 0 0 60px rgba(76, 175, 80, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3)'
+                      ? '0 0 25px rgba(76, 175, 80, 1), 0 0 50px rgba(139, 195, 74, 0.8), 0 0 75px rgba(76, 175, 80, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4)'
                       : progress >= 0.4
-                      ? '0 0 20px rgba(33, 150, 243, 0.8), 0 0 40px rgba(3, 169, 244, 0.6), 0 0 60px rgba(33, 150, 243, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3)'
-                      : '0 0 20px rgba(156, 39, 176, 0.8), 0 0 40px rgba(233, 30, 99, 0.6), 0 0 60px rgba(156, 39, 176, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3)',
-                    filter: 'blur(0.5px)',
+                      ? '0 0 25px rgba(33, 150, 243, 1), 0 0 50px rgba(3, 169, 244, 0.8), 0 0 75px rgba(33, 150, 243, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4)'
+                      : progress > 0
+                      ? '0 0 25px rgba(156, 39, 176, 1), 0 0 50px rgba(233, 30, 99, 0.8), 0 0 75px rgba(156, 39, 176, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.4)'
+                      : 'none',
+                    filter: progress > 0 ? 'blur(0.5px)' : 'none',
+                    zIndex: 1,
                   }}
                 >
                   {/* 내부 하이라이트 효과 */}
-                  <div
-                    className="absolute top-0 left-0 right-0 h-full rounded-full"
-                    style={{
-                      background: 'linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 50%)',
-                      mixBlendMode: 'overlay',
-                    }}
-                  />
+                  {progress > 0 && (
+                    <div
+                      className="absolute top-0 left-0 right-0 h-full rounded-full"
+                      style={{
+                        background: 'linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 50%)',
+                        mixBlendMode: 'overlay',
+                      }}
+                    />
+                  )}
                 </div>
               </div>
               <span className="text-xs" style={{ color: '#F5EFFF', opacity: 0.7 }}>
