@@ -10,12 +10,26 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
+// CORS 설정: 여러 origin 허용
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim())
+  : ['http://localhost:3000', 'http://localhost:3002'];
 
 // Middleware
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin: (origin, callback) => {
+      // origin이 없는 경우 (같은 도메인 요청 등) 허용
+      if (!origin) return callback(null, true);
+      
+      // 허용된 origin 목록에 있는지 확인
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
@@ -35,6 +49,6 @@ app.use('/api/vision-board', visionboardRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📡 CORS enabled for: ${CORS_ORIGIN}`);
+  console.log(`📡 CORS enabled for: ${allowedOrigins.join(', ')}`);
 });
 
