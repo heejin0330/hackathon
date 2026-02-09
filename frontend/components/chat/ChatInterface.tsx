@@ -68,6 +68,94 @@ export default function ChatInterface({
     scrollToBottom();
   }, [messages]);
 
+  // 마크다운 문법을 제거하여 순수 텍스트로 변환
+  const stripMarkdown = useCallback((text: string): string => {
+    return text
+      // 볼드 제거: **텍스트** 또는 __텍스트__ -> 텍스트
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/__(.*?)__/g, '$1')
+      // 이탤릭 제거: *텍스트* 또는 _텍스트_ -> 텍스트
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/_(.*?)_/g, '$1')
+      // 링크 제거: [텍스트](url) -> 텍스트
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+      // 코드 블록 제거: `코드` -> 코드
+      .replace(/`([^`]+)`/g, '$1')
+      // 헤더 제거: # 텍스트 -> 텍스트
+      .replace(/^#{1,6}\s+(.*)$/gm, '$1')
+      // 리스트 마커 제거: - 텍스트 또는 * 텍스트 -> 텍스트
+      .replace(/^[\*\-\+]\s+(.*)$/gm, '$1')
+      // 번호 리스트 제거: 1. 텍스트 -> 텍스트
+      .replace(/^\d+\.\s+(.*)$/gm, '$1')
+      // 인용 제거: > 텍스트 -> 텍스트
+      .replace(/^>\s+(.*)$/gm, '$1')
+      // 줄바꿈 정리
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }, []);
+
+  // 긴 텍스트를 여러 세그먼트로 나누기 (자연스러운 문장 단위로)
+  const splitIntoSegments = useCallback((text: string): string[] => {
+    // 문장 끝 패턴 (마침표, 느낌표, 물음표, 이모지 뒤 공백 등)
+    const sentenceEnders = /([.!?。！？]\s+|[\u{1F300}-\u{1F9FF}]\s+|:\s+)/gu;
+    
+    // 문장 단위로 나누기
+    const parts = text.split(sentenceEnders);
+    const sentences: string[] = [];
+    
+    // 문장과 구분자를 합쳐서 완전한 문장 만들기
+    for (let i = 0; i < parts.length; i += 2) {
+      const sentence = parts[i];
+      const delimiter = parts[i + 1] || '';
+      if (sentence && sentence.trim().length > 0) {
+        sentences.push(sentence + delimiter);
+      }
+    }
+    
+    const segments: string[] = [];
+    let currentSegment = '';
+    let currentLength = 0;
+    const maxLength = 250; // 각 세그먼트의 최대 길이 (약 2-3문장)
+    const minLength = 80; // 최소 길이 (너무 짧게 나누지 않기)
+
+    for (let i = 0; i < sentences.length; i++) {
+      const sentence = sentences[i];
+      const sentenceLength = sentence.trim().length;
+
+      // 현재 세그먼트에 문장 추가 시 최대 길이를 초과하는 경우
+      if (currentLength + sentenceLength > maxLength && currentLength >= minLength) {
+        segments.push(currentSegment.trim());
+        currentSegment = sentence;
+        currentLength = sentenceLength;
+      } else {
+        currentSegment += sentence;
+        currentLength += sentenceLength;
+      }
+    }
+
+    // 마지막 세그먼트 추가
+    if (currentSegment.trim().length > 0) {
+      segments.push(currentSegment.trim());
+    }
+
+    // 세그먼트가 1개면 그대로 반환
+    if (segments.length === 1) {
+      return segments;
+    }
+
+    // 최대 3개로 제한 (너무 많이 나누지 않기)
+    if (segments.length > 3) {
+      const result: string[] = [];
+      const chunkSize = Math.ceil(segments.length / 3);
+      for (let i = 0; i < segments.length; i += chunkSize) {
+        result.push(segments.slice(i, i + chunkSize).join(' '));
+      }
+      return result;
+    }
+
+    return segments;
+  }, []);
+
   const sendMessage = useCallback(async (messageText?: string) => {
     const text = messageText || input;
     if (!text.trim() || loading) return;
@@ -92,20 +180,50 @@ export default function ChatInterface({
         userMessage.input_method || 'text'
       );
 
-      const aiMessage: ConversationMessage = {
-        message_id: `ai-${Date.now()}`,
-        role: 'assistant',
-        content: response.ai_response.content,
-        timestamp: response.ai_response.timestamp,
-      };
+      // AI 응답을 여러 세그먼트로 나누기
+      const segments = splitIntoSegments(response.ai_response.content);
+      
+      // 각 세그먼트를 약간의 딜레이를 두고 순차적으로 표시
+      for (let i = 0; i < segments.length; i++) {
+        const delay = i * 800; // 각 세그먼트 사이 800ms 딜레이
+        
+        setTimeout(() => {
+          const aiMessage: ConversationMessage = {
+            message_id: `ai-${Date.now()}-${i}`,
+            role: 'assistant',
+            content: segments[i],
+            timestamp: new Date().toISOString(),
+          };
 
-      setMessages((prev) => [...prev, aiMessage]);
-      setProgress(response.progress);
-      onProgressUpdate?.(response.progress);
-
-      // 자동 음성 출력이 켜져 있으면 AI 응답을 읽어줌
-      if (autoSpeak && isTTSSupported) {
-        speak(response.ai_response.content);
+          setMessages((prev) => [...prev, aiMessage]);
+          
+          // 마지막 세그먼트일 때만 진행도 업데이트 및 완료 체크
+          if (i === segments.length - 1) {
+            setProgress(response.progress);
+            onProgressUpdate?.(response.progress);
+            
+            // 자동 음성 출력이 켜져 있으면 전체 응답을 읽어줌 (마크다운 제거)
+            if (autoSpeak && isTTSSupported) {
+              const cleanText = stripMarkdown(response.ai_response.content);
+              speak(cleanText);
+            }
+            
+            // 대화 완료 체크
+            if (response.progress >= 1.0) {
+              onComplete?.();
+            }
+            
+            // 로딩 상태 해제
+            setLoading(false);
+            inputRef.current?.focus();
+          }
+        }, delay);
+      }
+      
+      // 세그먼트가 1개인 경우 즉시 로딩 해제
+      if (segments.length === 1) {
+        setLoading(false);
+        inputRef.current?.focus();
       }
 
       // 대화 완료 체크
@@ -116,11 +234,10 @@ export default function ChatInterface({
       console.error('Error sending message:', error);
       setMessages((prev) => prev.filter((msg) => msg.message_id !== userMessage.message_id));
       alert(error.message || '메시지 전송에 실패했습니다');
-    } finally {
       setLoading(false);
       inputRef.current?.focus();
     }
-  }, [input, loading, sessionId, onProgressUpdate, onComplete, autoSpeak, isTTSSupported, speak]);
+  }, [input, loading, sessionId, onProgressUpdate, onComplete, autoSpeak, isTTSSupported, speak, stripMarkdown, splitIntoSegments]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -142,7 +259,9 @@ export default function ChatInterface({
     if (isSpeaking) {
       cancelSpeak();
     } else {
-      speak(text);
+      // 마크다운 제거 후 읽기
+      const cleanText = stripMarkdown(text);
+      speak(cleanText);
     }
   };
 
@@ -208,11 +327,12 @@ export default function ChatInterface({
                   </p>
 
                   <div
-                    className={`relative ${
-                      isUser ? 'rounded-3xl rounded-tr-none' : 'rounded-3xl rounded-tl-none'
-                    }`}
+                    className={`relative`}
                     style={{
-                      padding: '16px 20px',
+                      padding: '16px 20px 15px 20px',
+                      borderRadius: isUser 
+                        ? '20px 20px 20px 20px' // 사용자: 모든 모서리 둥글게
+                        : '20px 20px 20px 20px', // AI: 모든 모서리 둥글게
                       background: isUser
                         ? 'linear-gradient(135deg, rgb(99, 102, 241), rgb(139, 92, 246))'
                         : 'rgba(255, 255, 255, 0.1)',
@@ -252,8 +372,7 @@ export default function ChatInterface({
                           strong: ({ children }) => (
                             <strong
                               style={{
-                                fontWeight: '600',
-                                color: '#FFFFFF',
+                                color: '#FFD700', // 옐로우 컬러로 강조
                                 letterSpacing: '0.01em',
                               }}
                             >
@@ -376,8 +495,8 @@ export default function ChatInterface({
                     </div>
 
                     {/* 하단: 시간 + TTS */}
-                    <div className="flex items-center justify-between mt-3 gap-2 pt-2 border-t border-white/10">
-                      <p className="text-xs opacity-70" style={{ color: '#FFFFFF' }}>
+                    <div className="flex items-center justify-between mt-3 gap-2 pt-2 border-t border-white/10" style={{ marginBottom: 0, paddingBottom: 0 }}>
+                      <p className="text-xs opacity-70" style={{ color: '#FFFFFF', marginBottom: 0 }}>
                         {new Date(message.timestamp).toLocaleTimeString('ko-KR', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -418,31 +537,61 @@ export default function ChatInterface({
                 🤖
               </div>
               <div
-                className="rounded-3xl rounded-tl-none"
                 style={{
                   padding: '16px 20px',
                   background: 'rgba(255, 255, 255, 0.1)',
                   border: '1px solid rgba(255,255,255,0.2)',
                   backdropFilter: 'blur(20px)',
+                  borderRadius: '20px',
                 }}
               >
                 <div className="flex items-center gap-2">
                   <span className="text-white text-xs" style={{ color: '#FFFFFF' }}>
-                    패스파인더가 생각 중
+                    {t('conversation.thinking')}
                   </span>
-                  <div className="flex space-x-1.5">
+                  {/* 별이 도는 효과 */}
+                  <div className="relative" style={{ width: '16px', height: '16px' }}>
                     <div
-                      className="w-2 h-2 rounded-full animate-bounce"
-                      style={{ background: '#5AC8FA', animationDelay: '0ms' }}
-                    />
-                    <div
-                      className="w-2 h-2 rounded-full animate-bounce"
-                      style={{ background: '#007AFF', animationDelay: '150ms' }}
-                    />
-                    <div
-                      className="w-2 h-2 rounded-full animate-bounce"
-                      style={{ background: '#5856D6', animationDelay: '300ms' }}
-                    />
+                      className="absolute inset-0"
+                      style={{
+                        animation: 'spin 2s linear infinite',
+                      }}
+                    >
+                      <span style={{ fontSize: '12px' }}>⭐</span>
+                    </div>
+                  </div>
+                  {/* 점 3개 애니메이션 */}
+                  <div className="flex items-center gap-1" style={{ marginLeft: '4px' }}>
+                    <span
+                      className="text-white"
+                      style={{
+                        fontSize: '16px',
+                        animation: 'dot1 1.4s infinite',
+                        animationDelay: '0s',
+                      }}
+                    >
+                      .
+                    </span>
+                    <span
+                      className="text-white"
+                      style={{
+                        fontSize: '16px',
+                        animation: 'dot2 1.4s infinite',
+                        animationDelay: '0.2s',
+                      }}
+                    >
+                      .
+                    </span>
+                    <span
+                      className="text-white"
+                      style={{
+                        fontSize: '16px',
+                        animation: 'dot3 1.4s infinite',
+                        animationDelay: '0.4s',
+                      }}
+                    >
+                      .
+                    </span>
                   </div>
                 </div>
               </div>
@@ -462,12 +611,12 @@ export default function ChatInterface({
                 🎙️
               </div>
               <div
-                className="rounded-3xl rounded-tr-none"
                 style={{
                   padding: '14px 20px',
                   background: 'rgba(255, 59, 48, 0.1)',
                   border: '1px solid rgba(255,59,48,0.25)',
                   backdropFilter: 'blur(20px)',
+                  borderRadius: '20px',
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -485,15 +634,8 @@ export default function ChatInterface({
       </div>
 
       {/* ── Input Area ── */}
-      <div
-        className="shrink-0 px-4 sm:px-6 py-5"
-        style={{
-          background: 'rgba(10, 14, 26, 0.6)',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(20px)',
-        }}
-      >
-        <div className="flex items-center gap-3 max-w-4xl mx-auto">
+      <div className="shrink-0 px-4 sm:px-6" style={{ paddingTop: '30px', paddingBottom: '30px' }}>
+        <div className="flex items-center max-w-4xl mx-auto" style={{ gap: '12px' }}>
           {/* 음성 입력 버튼 */}
           {isSTTSupported && (
             <button

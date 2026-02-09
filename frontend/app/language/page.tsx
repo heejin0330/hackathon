@@ -26,7 +26,7 @@ export default function LanguagePage() {
 
   const handleSelectLanguage = (lang: 'ko' | 'en' | 'es' | 'ja') => {
     setLanguage(lang);
-    router.push('/onboarding');
+    router.push('/');
   };
 
   return (
@@ -36,17 +36,17 @@ export default function LanguagePage() {
       <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
         <div className="glass-hero shadow-2xl" style={{ padding: '30px', borderRadius: '24px' }}>
           {/* 타이틀 */}
-          <h1 className="text-2xl font-bold text-white text-center tracking-tight" style={{ marginBottom: '4px' }}>
+          <h1 className="text-2xl font-bold text-center tracking-tight" style={{ marginBottom: '4px', color: '#F5EFFF' }}>
             Select your language
           </h1>
-          <p className="text-xs text-white text-center" style={{ marginBottom: '15px' }}>
+          <p className="text-xs text-center" style={{ marginBottom: '15px', color: '#F5EFFF' }}>
             언어를 선택해주세요
           </p>
 
           {/* 언어 리스트 */}
           <div className="flex flex-col" style={{ gap: '15px' }}>
             {languages.map((lang) => {
-              const isSelected = language === lang.code;
+              const isSelected = language !== null && language === lang.code;
               const isHovered = hoveredLang === lang.code;
               const dotColor = LANG_COLORS[lang.code];
 
@@ -86,7 +86,7 @@ export default function LanguagePage() {
                     <span
                       className="text-sm font-medium"
                       style={{
-                        color: '#ffffff',
+                        color: '#F5EFFF',
                         transition: 'color 0.2s ease',
                       }}
                     >

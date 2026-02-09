@@ -87,7 +87,7 @@ export default function RecommendationsPage() {
         <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
           <div className="glass-hero rounded-3xl px-6 py-10 shadow-2xl text-center">
             <div className="w-10 h-10 border-2 border-[#0064FF]/30 border-t-[#0064FF] rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-white text-sm">{t('recommendations.loading')}</p>
+            <p className="text-sm" style={{ color: '#F5EFFF' }}>{t('recommendations.loading')}</p>
           </div>
         </div>
       </div>
@@ -100,7 +100,7 @@ export default function RecommendationsPage() {
         <StarsBackground />
         <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
           <div className="glass-hero rounded-3xl px-6 py-8 shadow-2xl text-center">
-            <p className="text-white text-sm mb-4">{error}</p>
+            <p className="text-sm mb-4" style={{ color: '#F5EFFF' }}>{error}</p>
             <button onClick={() => router.push('/')} className="btn-primary text-sm px-8 py-2.5">
               {t('button.back')}
             </button>
@@ -117,10 +117,10 @@ export default function RecommendationsPage() {
       <div className="relative z-10 w-full mx-auto px-5 py-6 pb-24" style={{ maxWidth: '480px' }}>
         {/* 헤더 */}
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">
+          <h1 className="text-2xl font-bold mb-1 tracking-tight" style={{ color: '#F5EFFF' }}>
             {t('recommendations.title')}
           </h1>
-          <p className="text-xs text-white">
+          <p className="text-xs" style={{ color: '#F5EFFF' }}>
             {t('recommendations.subtitle', { count: recommendations.length })}
           </p>
         </div>
@@ -139,10 +139,10 @@ export default function RecommendationsPage() {
 
         {/* 커스텀 진로 추가 */}
         <div className="glass-hero rounded-2xl px-5 py-5 shadow-2xl mb-6">
-          <h2 className="text-sm font-semibold text-white mb-1">
+          <h2 className="text-sm font-semibold mb-1" style={{ color: '#F5EFFF' }}>
             💡 {t('recommendations.custom.title')}
           </h2>
-          <p className="text-xs text-white mb-4">
+          <p className="text-xs mb-4" style={{ color: '#F5EFFF' }}>
             {t('recommendations.custom.description')}
           </p>
 
@@ -190,8 +190,8 @@ export default function RecommendationsPage() {
         <div className="fixed bottom-0 left-0 right-0 z-20">
           <div className="w-full mx-auto px-5 pb-5" style={{ maxWidth: '480px' }}>
             <div className="glass-hero rounded-2xl px-5 py-3 shadow-2xl flex items-center justify-between">
-              <p className="text-xs text-white">
-                <span className="font-semibold text-white">{selectedCareers.size}</span>
+              <p className="text-xs" style={{ color: '#F5EFFF' }}>
+                <span className="font-semibold" style={{ color: '#F5EFFF' }}>{selectedCareers.size}</span>
                 {' '}{t('recommendations.selected', { count: selectedCareers.size })}
               </p>
               <button onClick={handleContinue} className="btn-primary text-xs px-5 py-2">

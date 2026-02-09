@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Next.js API Routes를 사용하므로 같은 도메인 사용 (상대 경로)
+const API_URL = '';
 
 export class ApiClient {
   private baseUrl: string;
@@ -27,13 +28,20 @@ export class ApiClient {
     options: RequestInit = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
-    };
+    const headers = new Headers();
+    
+    headers.set('Content-Type', 'application/json');
+    
+    // options.headers가 있으면 병합
+    if (options.headers) {
+      const existingHeaders = new Headers(options.headers);
+      existingHeaders.forEach((value, key) => {
+        headers.set(key, value);
+      });
+    }
 
     if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
+      headers.set('Authorization', `Bearer ${this.token}`);
     }
 
     try {

@@ -66,13 +66,13 @@ export default function OnboardingPage() {
         <div className="glass-hero shadow-2xl" style={{ padding: '30px', borderRadius: '24px' }}>
           {/* 타이틀 영역 */}
           <div className="text-center" style={{ marginBottom: '15px' }}>
-            <h1 className="text-2xl font-bold text-white tracking-tight" style={{ marginBottom: '4px' }}>
+            <h1 className="text-2xl font-bold tracking-tight" style={{ marginBottom: '4px', color: '#F5EFFF' }}>
               {t('onboarding.subtitle')}
             </h1>
-            <p className="text-xs text-white" style={{ marginBottom: '8px' }}>
+            <p className="text-xs" style={{ marginBottom: '8px', color: '#F5EFFF' }}>
               {t('onboarding.title')}
             </p>
-            <p className="text-sm text-white">
+            <p className="text-sm" style={{ color: '#F5EFFF' }}>
               {t('onboarding.question')}
             </p>
           </div>
@@ -80,7 +80,8 @@ export default function OnboardingPage() {
           <form onSubmit={handleSubmit}>
             {error && (
               <div
-                className="text-white text-sm"
+                className="text-sm"
+                style={{ color: '#F5EFFF' }}
                 style={{
                   background: 'rgba(255, 59, 48, 0.15)',
                   padding: '10px 14px',
@@ -94,7 +95,7 @@ export default function OnboardingPage() {
 
             {/* 닉네임 - 필수 */}
             <div style={{ marginBottom: '15px' }}>
-              <label htmlFor="nickname" className="text-white text-xs font-medium" style={{ display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="nickname" className="text-xs font-medium" style={{ display: 'block', marginBottom: '6px', color: '#F5EFFF' }}>
                 {t('onboarding.nickname')} *
               </label>
               <input
@@ -110,7 +111,7 @@ export default function OnboardingPage() {
 
             {/* 나이 - 필수 */}
             <div style={{ marginBottom: '15px' }}>
-              <label htmlFor="age" className="text-white text-xs font-medium" style={{ display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="age" className="text-xs font-medium" style={{ display: 'block', marginBottom: '6px', color: '#F5EFFF' }}>
                 {t('onboarding.age.range')}
               </label>
               <input
@@ -127,7 +128,7 @@ export default function OnboardingPage() {
 
             {/* 학년 - 필수 아님 */}
             <div style={{ marginBottom: '15px' }}>
-              <label htmlFor="grade" className="text-white text-xs font-medium" style={{ display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="grade" className="text-xs font-medium" style={{ display: 'block', marginBottom: '6px', color: '#F5EFFF' }}>
                 {t('onboarding.grade')}
               </label>
               <input
@@ -145,7 +146,7 @@ export default function OnboardingPage() {
               <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '15px' }}>
                 {/* 거주 지역 */}
                 <div style={{ marginBottom: '15px' }}>
-                  <label htmlFor="country" className="text-white text-xs font-medium" style={{ display: 'block', marginBottom: '6px' }}>
+                  <label htmlFor="country" className="text-xs font-medium" style={{ display: 'block', marginBottom: '6px', color: '#F5EFFF' }}>
                     {t('onboarding.country')}
                   </label>
                   <input
@@ -160,7 +161,7 @@ export default function OnboardingPage() {
 
                 {/* 소통 방식 */}
                 <div>
-                  <label htmlFor="preferredInputMethod" className="text-white text-xs font-medium" style={{ display: 'block', marginBottom: '6px' }}>
+                  <label htmlFor="preferredInputMethod" className="text-xs font-medium" style={{ display: 'block', marginBottom: '6px', color: '#F5EFFF' }}>
                     {t('onboarding.inputMethod')}
                   </label>
                   <select

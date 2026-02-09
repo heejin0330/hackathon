@@ -1,11 +1,35 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import StarsBackground from '@/components/common/StarsBackground';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+const LANG_COLORS: Record<string, string> = {
+  ko: '#5B8DEF',
+  en: '#34C759',
+  es: '#FF9F0A',
+  ja: '#FF453A',
+};
+
+const LANG_NAMES: Record<string, string> = {
+  ko: '한국어',
+  en: 'English',
+  es: 'Español',
+  ja: '日本語',
+};
+
 export default function Home() {
-  const { t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
+  const [showLanguageSelector, setShowLanguageSelector] = useState(!language);
+  const [hoveredLang, setHoveredLang] = useState<string | null>(null);
+
+  const languages: Array<'ko' | 'en' | 'es' | 'ja'> = ['ko', 'en', 'es', 'ja'];
+
+  const handleSelectLanguage = (lang: 'ko' | 'en' | 'es' | 'ja') => {
+    setLanguage(lang);
+    setShowLanguageSelector(false);
+  };
 
   return (
     <div className="relative min-h-screen deep-space overflow-hidden flex items-center justify-center">
@@ -14,31 +38,133 @@ export default function Home() {
       <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
         <div className="glass-hero shadow-2xl text-center" style={{ padding: '30px', borderRadius: '24px' }}>
           {/* 영어 메인 타이틀 */}
-          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight leading-tight mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight mb-2" style={{ color: '#F5EFFF' }}>
             {t('app.subtitle')}
           </h1>
 
           {/* 한국어 서브타이틀 */}
-          <p className="text-sm text-white font-medium tracking-wide" style={{ marginBottom: '15px' }}>
+          <p className="text-sm font-medium tracking-wide" style={{ marginBottom: '15px', color: '#F5EFFF' }}>
             {t('app.name')}
           </p>
 
           {/* 설명 텍스트 */}
-          <p className="text-sm text-white leading-relaxed" style={{ marginBottom: '6px' }}>
+          <p className="text-sm leading-relaxed" style={{ marginBottom: '6px', color: '#F5EFFF' }}>
             {t('app.description')}
           </p>
-          <p className="text-xs text-white" style={{ marginBottom: '30px' }}>
+          <p className="text-xs" style={{ marginBottom: '30px', color: '#F5EFFF' }}>
             {t('app.description2')}
           </p>
 
           {/* CTA 버튼 */}
           <Link
-            href="/language"
+            href={language ? "/onboarding" : "/onboarding"}
             className="btn-primary text-sm px-10 py-3"
           >
             {t('button.start')}
             <span className="ml-1.5">→</span>
           </Link>
+
+          {/* 언어 선택 동그란 버튼들 (파란 버튼 하단) */}
+          <div className="flex items-center justify-center" style={{ marginTop: '15px', gap: '15px' }}>
+            {languages.filter(lang => lang !== 'en').map((lang) => {
+              const isSelected = language === lang;
+              const isHovered = hoveredLang === lang;
+              const dotColor = LANG_COLORS[lang];
+              const enColor = LANG_COLORS['en'];
+
+              // 선택된 언어의 자리에 영어 버튼 표시
+              if (isSelected) {
+                return (
+                  <button
+                    key="en"
+                    onClick={() => handleSelectLanguage('en')}
+                    onMouseEnter={() => setHoveredLang('en')}
+                    onMouseLeave={() => setHoveredLang(null)}
+                    style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '50%',
+                      background: language === 'en'
+                        ? enColor
+                        : hoveredLang === 'en'
+                          ? `${enColor}80`
+                          : 'rgba(255, 255, 255, 0.08)',
+                      border: language === 'en'
+                        ? `2px solid ${enColor}`
+                        : '2px solid rgba(255, 255, 255, 0.15)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      transform: hoveredLang === 'en' ? 'scale(1.1)' : 'scale(1)',
+                      boxShadow: language === 'en'
+                        ? `0 0 12px ${enColor}60`
+                        : hoveredLang === 'en'
+                          ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                          : 'none',
+                    }}
+                    title={LANG_NAMES['en']}
+                  >
+                    {language === 'en' ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <span
+                        style={{
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: '#F5EFFF',
+                        }}
+                      >
+                        EN
+                      </span>
+                    )}
+                  </button>
+                );
+              }
+
+              // 선택되지 않은 언어 버튼
+              return (
+                <button
+                  key={lang}
+                  onClick={() => handleSelectLanguage(lang)}
+                  onMouseEnter={() => setHoveredLang(lang)}
+                  onMouseLeave={() => setHoveredLang(null)}
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: isHovered
+                      ? `${dotColor}80`
+                      : 'rgba(255, 255, 255, 0.08)',
+                    border: '2px solid rgba(255, 255, 255, 0.15)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                    boxShadow: isHovered
+                      ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                      : 'none',
+                  }}
+                  title={LANG_NAMES[lang]}
+                >
+                  <span
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#F5EFFF',
+                    }}
+                  >
+                    {lang === 'ko' ? '한' : lang === 'es' ? 'ES' : '日'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

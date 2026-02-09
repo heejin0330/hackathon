@@ -15,7 +15,7 @@ const Universe3D = dynamic(() => import('@/components/universe/Universe3D'), {
     <div className="w-full h-full flex items-center justify-center" style={{ background: '#050816' }}>
       <div className="text-center">
         <div className="w-10 h-10 border-2 border-[#0064FF]/30 border-t-[#0064FF] rounded-full animate-spin mx-auto mb-4" />
-        <p className="text-white text-xs">3D 우주 로딩 중...</p>
+        <p className="text-xs" style={{ color: '#F5EFFF' }}>3D 우주 로딩 중...</p>
       </div>
     </div>
   ),
@@ -77,7 +77,7 @@ export default function UniversePage() {
         <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
           <div className="glass-hero rounded-3xl px-6 py-10 shadow-2xl text-center">
             <div className="w-10 h-10 border-2 border-[#0064FF]/30 border-t-[#0064FF] rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-white text-sm">{t('universe.loading')}</p>
+            <p className="text-sm" style={{ color: '#F5EFFF' }}>{t('universe.loading')}</p>
           </div>
         </div>
       </div>
@@ -100,10 +100,10 @@ export default function UniversePage() {
       <header className="relative z-10 glass px-5 py-3 shrink-0">
         <div className="mx-auto flex items-center justify-between" style={{ maxWidth: '480px' }}>
           <div>
-            <h1 className="text-base font-semibold text-white mb-0.5">
+            <h1 className="text-base font-semibold mb-0.5" style={{ color: '#F5EFFF' }}>
               {t('universe.title')}
             </h1>
-            <p className="text-white text-xs">{t('universe.description')}</p>
+            <p className="text-xs" style={{ color: '#F5EFFF' }}>{t('universe.description')}</p>
           </div>
           <button
             onClick={() => router.back()}
@@ -116,7 +116,7 @@ export default function UniversePage() {
 
       {/* 우측 하단 안내 */}
       <div className="absolute bottom-4 left-4 z-10 pointer-events-none">
-        <div className="glass rounded-xl px-3 py-2 text-xs text-white">
+        <div className="glass rounded-xl px-3 py-2 text-xs" style={{ color: '#F5EFFF' }}>
           🖱️ {t('universe.controls') || '드래그: 회전 | 스크롤: 줌 | 행성 클릭: 상세'}
         </div>
       </div>
@@ -146,35 +146,35 @@ export default function UniversePage() {
                 </span>
               )}
 
-              <h2 className="text-base font-bold text-white mb-1 pr-6">
+              <h2 className="text-base font-bold mb-1 pr-6" style={{ color: '#F5EFFF' }}>
                 {selectedCareer.career_name}
               </h2>
-              <p className="text-xs text-white mb-3 leading-relaxed">
+              <p className="text-xs mb-3 leading-relaxed" style={{ color: '#F5EFFF' }}>
                 {selectedCareer.description}
               </p>
 
               <div className="space-y-3">
                 {/* 추천 이유 */}
                 <div>
-                  <h3 className="text-xs font-semibold text-white mb-0.5">
+                  <h3 className="text-xs font-semibold mb-0.5" style={{ color: '#F5EFFF' }}>
                     {t('career.why')}
                   </h3>
-                  <p className="text-xs text-white leading-relaxed">
+                  <p className="text-xs leading-relaxed" style={{ color: '#F5EFFF' }}>
                     {selectedCareer.match_reason}
                   </p>
                 </div>
 
                 {/* 필요 스킬 */}
                 <div>
-                  <h3 className="text-xs font-semibold text-white mb-1">
+                  <h3 className="text-xs font-semibold mb-1" style={{ color: '#F5EFFF' }}>
                     {t('career.skills')}
                   </h3>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedCareer.skills_needed.map((skill, index) => (
                       <span
                         key={index}
-                        className="px-2 py-0.5 text-white text-[10px] rounded-full"
-                        style={{ background: 'rgba(0, 100, 255, 0.2)' }}
+                        className="px-2 py-0.5 text-[10px] rounded-full"
+                        style={{ color: '#F5EFFF', background: 'rgba(0, 100, 255, 0.2)' }}
                       >
                         {skill}
                       </span>
@@ -184,15 +184,15 @@ export default function UniversePage() {
 
                 {/* 관련 직업 */}
                 <div>
-                  <h3 className="text-xs font-semibold text-white mb-1">
+                  <h3 className="text-xs font-semibold mb-1" style={{ color: '#F5EFFF' }}>
                     {t('career.jobs')}
                   </h3>
                   <div className="flex flex-wrap gap-1.5">
                     {selectedCareer.example_jobs.map((job, index) => (
                       <span
                         key={index}
-                        className="px-2 py-0.5 text-white text-[10px] rounded-full"
-                        style={{ background: 'rgba(255, 255, 255, 0.06)' }}
+                        className="px-2 py-0.5 text-[10px] rounded-full"
+                        style={{ color: '#F5EFFF', background: 'rgba(255, 255, 255, 0.06)' }}
                       >
                         {job}
                       </span>
@@ -203,18 +203,18 @@ export default function UniversePage() {
                 {/* 교육/전망 */}
                 <div className="flex gap-3">
                   <div className="flex-1">
-                    <h3 className="text-xs font-semibold text-white mb-0.5">
+                    <h3 className="text-xs font-semibold mb-0.5" style={{ color: '#F5EFFF' }}>
                       {t('career.education')}
                     </h3>
-                    <p className="text-[10px] text-white leading-relaxed">
+                    <p className="text-[10px] leading-relaxed" style={{ color: '#F5EFFF' }}>
                       {selectedCareer.education_path}
                     </p>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xs font-semibold text-white mb-0.5">
+                    <h3 className="text-xs font-semibold mb-0.5" style={{ color: '#F5EFFF' }}>
                       {t('career.growth')}
                     </h3>
-                    <p className="text-[10px] text-white leading-relaxed">
+                    <p className="text-[10px] leading-relaxed" style={{ color: '#F5EFFF' }}>
                       {selectedCareer.growth_potential}
                     </p>
                   </div>

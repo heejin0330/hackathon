@@ -5,7 +5,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 type Language = 'ko' | 'en' | 'es' | 'ja';
 
 interface LanguageContextType {
-  language: Language;
+  language: Language | null;
   setLanguage: (lang: Language) => void;
   t: (key: string, params?: Record<string, string | number>) => string;
 }
@@ -28,6 +28,7 @@ const translations = {
     'button.selected': '선택됨',
     'button.add': '추가하기',
     'button.close': '닫기',
+    'button.home': '처음으로',
     
     // Onboarding
     'onboarding.title': '너에게 우주를 줄게',
@@ -52,10 +53,12 @@ const translations = {
     'onboarding.error.create': '사용자 생성에 실패했습니다',
     
     // Conversation
-    'conversation.title': '너에게 우주를 줄게',
+    'conversation.title': '🚀 너에게 우주를 줄게',
+    'conversation.subtitle': '제미나이 3.0 이 패스파인더가 되어 대화를 통해 진로를 탐색하는 여정을 함께합니다.',
     'conversation.progress': '진행도',
     'conversation.input.placeholder': '메시지를 입력하세요...',
     'conversation.loading': '우주 탐험 준비 중...',
+    'conversation.thinking': '패스파인더가 생각 중',
     'conversation.error.start': '대화를 시작할 수 없습니다',
     'conversation.error.analyze': '분석 중 오류가 발생했습니다',
     'conversation.restart': '다시 시작하기',
@@ -138,6 +141,7 @@ const translations = {
     'button.selected': 'Selected',
     'button.add': 'Add',
     'button.close': 'Close',
+    'button.home': 'Home',
     
     // Onboarding
     'onboarding.title': '너에게 우주를 줄게',
@@ -162,10 +166,12 @@ const translations = {
     'onboarding.error.create': 'Failed to create user',
     
     // Conversation
-    'conversation.title': '너에게 우주를 줄게',
+    'conversation.title': '🚀 The Universe is Yours',
+    'conversation.subtitle': 'Gemini 3.0 becomes Pathfinder and accompanies you on a journey to explore careers through conversation.',
     'conversation.progress': 'Progress',
     'conversation.input.placeholder': 'Type your message...',
     'conversation.loading': 'Preparing for exploration...',
+    'conversation.thinking': 'Pathfinder is thinking...',
     'conversation.error.start': 'Failed to start conversation',
     'conversation.error.analyze': 'Error occurred during analysis',
     'conversation.restart': 'Start Over',
@@ -248,6 +254,7 @@ const translations = {
     'button.selected': 'Seleccionado',
     'button.add': 'Agregar',
     'button.close': 'Cerrar',
+    'button.home': 'Inicio',
     
     // Onboarding
     'onboarding.title': '너에게 우주를 줄게',
@@ -272,10 +279,12 @@ const translations = {
     'onboarding.error.create': 'Error al crear usuario',
     
     // Conversation
-    'conversation.title': '너에게 우주를 줄게',
+    'conversation.title': '🚀 Te Doy el Universo',
+    'conversation.subtitle': 'Gemini 3.0 se convierte en Pathfinder y te acompaña en un viaje para explorar carreras a través de la conversación.',
     'conversation.progress': 'Progreso',
     'conversation.input.placeholder': 'Escribe tu mensaje...',
     'conversation.loading': 'Preparando exploración...',
+    'conversation.thinking': 'Pathfinder está pensando...',
     'conversation.error.start': 'Error al iniciar conversación',
     'conversation.error.analyze': 'Error durante el análisis',
     'conversation.restart': 'Empezar de Nuevo',
@@ -358,6 +367,7 @@ const translations = {
     'button.selected': '選択済み',
     'button.add': '追加',
     'button.close': '閉じる',
+    'button.home': '最初に',
     
     // Onboarding
     'onboarding.title': '너에게 우주를 줄게',
@@ -382,10 +392,12 @@ const translations = {
     'onboarding.error.create': 'ユーザー作成に失敗しました',
     
     // Conversation
-    'conversation.title': '너에게 우주를 줄게',
+    'conversation.title': '🚀 あなたに宇宙をあげる',
+    'conversation.subtitle': 'Gemini 3.0がパスファインダーとなり、会話を通じてキャリアを探求する旅に同行します。',
     'conversation.progress': '進捗',
     'conversation.input.placeholder': 'メッセージを入力...',
     'conversation.loading': '探索の準備中...',
+    'conversation.thinking': 'パスファインダーが考えています...',
     'conversation.error.start': '会話を開始できませんでした',
     'conversation.error.analyze': '分析中にエラーが発生しました',
     'conversation.restart': '最初からやり直す',
@@ -456,8 +468,8 @@ const translations = {
 };
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  // 최초 언어는 영어(en)로 설정
-  const [language, setLanguageState] = useState<Language>('en');
+  // 최초에는 언어가 선택되지 않음
+  const [language, setLanguageState] = useState<Language | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -475,7 +487,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
-    let text = translations[language][key as keyof typeof translations.ko] || key;
+    // 언어가 선택되지 않았으면 기본값(영어) 사용
+    const currentLang = language || 'en';
+    let text = translations[currentLang][key as keyof typeof translations.ko] || key;
     
     // 파라미터 치환 (예: {count} -> 실제 값)
     if (params) {

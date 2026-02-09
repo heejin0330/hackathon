@@ -70,8 +70,8 @@ export default function VisionBoardPage() {
           {/* 헤더 */}
           <div className="text-center mb-6">
             <span className="text-3xl mb-2 block">✨</span>
-            <h1 className="text-xl font-bold text-white mb-1">{t('visionBoard.result')}</h1>
-            <p className="text-xs text-white">{careerName}</p>
+            <h1 className="text-xl font-bold mb-1" style={{ color: '#F5EFFF' }}>{t('visionBoard.result')}</h1>
+            <p className="text-xs" style={{ color: '#F5EFFF' }}>{careerName}</p>
           </div>
 
           {/* 비전 보드 카드 */}
@@ -88,9 +88,9 @@ export default function VisionBoardPage() {
                     : 'linear-gradient(135deg, #713f12 0%, #f59e0b 100%)',
               }}
             >
-              <p className="text-xs text-white mb-1">{visionData.year}</p>
-              <h2 className="text-lg font-bold text-white mb-1">{visionData.title}</h2>
-              <p className="text-sm text-white">
+              <p className="text-xs mb-1" style={{ color: '#F5EFFF' }}>{visionData.year}</p>
+              <h2 className="text-lg font-bold mb-1" style={{ color: '#F5EFFF' }}>{visionData.title}</h2>
+              <p className="text-sm" style={{ color: '#F5EFFF' }}>
                 {visionData.role} @ {visionData.company}
               </p>
             </div>
@@ -98,26 +98,27 @@ export default function VisionBoardPage() {
             {/* 본문 */}
             <div className="px-5 py-5 space-y-5">
               {/* 설명 */}
-              <p className="text-sm text-white leading-relaxed">{visionData.description}</p>
+              <p className="text-sm leading-relaxed" style={{ color: '#F5EFFF' }}>{visionData.description}</p>
 
               {/* 인용구 */}
               <div
                 className="text-center px-4 py-4 rounded-xl"
                 style={{ background: 'rgba(255, 255, 255, 0.04)' }}
               >
-                <p className="text-sm text-white italic leading-relaxed">
+                <p className="text-sm italic leading-relaxed" style={{ color: '#F5EFFF' }}>
                   &ldquo;{visionData.quote}&rdquo;
                 </p>
               </div>
 
               {/* 성과 */}
               <div>
-                <h3 className="text-xs font-semibold text-white mb-2">🏅 주요 성과</h3>
+                <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF' }}>🏅 주요 성과</h3>
                 <div className="space-y-2">
                   {visionData.achievements.map((achievement, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-2 text-xs text-white"
+                      className="flex items-start gap-2 text-xs"
+                      style={{ color: '#F5EFFF' }}
                     >
                       <span className="text-[#007AFF] mt-0.5">•</span>
                       <span className="leading-relaxed">{achievement}</span>
@@ -128,7 +129,7 @@ export default function VisionBoardPage() {
 
               {/* 마일스톤 타임라인 */}
               <div>
-                <h3 className="text-xs font-semibold text-white mb-3">📍 성장 타임라인</h3>
+                <h3 className="text-xs font-semibold mb-3" style={{ color: '#F5EFFF' }}>📍 성장 타임라인</h3>
                 <div className="relative pl-4 space-y-3">
                   {/* 타임라인 라인 */}
                   <div
@@ -151,7 +152,7 @@ export default function VisionBoardPage() {
                         <p className="text-[10px] font-semibold text-[#007AFF]">
                           {milestone.year}
                         </p>
-                        <p className="text-xs text-white leading-relaxed">
+                        <p className="text-xs leading-relaxed" style={{ color: '#F5EFFF' }}>
                           {milestone.event}
                         </p>
                       </div>
@@ -162,8 +163,8 @@ export default function VisionBoardPage() {
 
               {/* 일상 */}
               <div>
-                <h3 className="text-xs font-semibold text-white mb-2">☀️ 하루 일과</h3>
-                <p className="text-xs text-white leading-relaxed">{visionData.daily_life}</p>
+                <h3 className="text-xs font-semibold mb-2" style={{ color: '#F5EFFF' }}>☀️ 하루 일과</h3>
+                <p className="text-xs leading-relaxed" style={{ color: '#F5EFFF' }}>{visionData.daily_life}</p>
               </div>
             </div>
           </div>
@@ -187,13 +188,15 @@ export default function VisionBoardPage() {
                     : 'id_badge'
                 );
               }}
-              className="w-full text-sm py-3 text-white hover:text-white/80 transition-colors"
+              className="w-full text-sm py-3 transition-colors"
+              style={{ color: '#F5EFFF' }}
             >
               {t('visionBoard.otherStyle')}
             </button>
             <button
               onClick={() => router.back()}
-              className="w-full text-sm py-2 text-white hover:text-white/80 transition-colors"
+              className="w-full text-sm py-2 transition-colors"
+              style={{ color: '#F5EFFF' }}
             >
               ← {t('button.back')}
             </button>
@@ -212,12 +215,12 @@ export default function VisionBoardPage() {
           {/* 헤더 */}
           <div className="text-center mb-6">
             <span className="text-3xl mb-2 block">🌟</span>
-            <h1 className="text-xl font-bold text-white mb-1">{t('visionBoard.title')}</h1>
-            <p className="text-xs text-white mb-2">{t('visionBoard.subtitle')}</p>
+            <h1 className="text-xl font-bold mb-1" style={{ color: '#F5EFFF' }}>{t('visionBoard.title')}</h1>
+            <p className="text-xs mb-2" style={{ color: '#F5EFFF' }}>{t('visionBoard.subtitle')}</p>
             {careerName && (
               <div
-                className="inline-block px-3 py-1 rounded-full text-xs text-white"
-                style={{ background: 'rgba(0, 100, 255, 0.15)' }}
+                className="inline-block px-3 py-1 rounded-full text-xs"
+                style={{ background: 'rgba(0, 100, 255, 0.15)', color: '#F5EFFF' }}
               >
                 {careerName}
               </div>
@@ -227,7 +230,8 @@ export default function VisionBoardPage() {
           {/* 에러 표시 */}
           {error && (
             <div
-              className="text-white text-sm mb-4"
+              className="text-sm mb-4"
+              style={{ color: '#F5EFFF' }}
               style={{
                 background: 'rgba(255, 59, 48, 0.15)',
                 padding: '10px 14px',
@@ -240,7 +244,7 @@ export default function VisionBoardPage() {
 
           {/* 스타일 선택 */}
           <div className="mb-6">
-            <label className="text-white text-xs font-medium block mb-3">
+            <label className="text-xs font-medium block mb-3" style={{ color: '#F5EFFF' }}>
               {t('visionBoard.style')}
             </label>
             <div className="space-y-2">
@@ -262,8 +266,9 @@ export default function VisionBoardPage() {
                   <span className="text-xl">{s.icon}</span>
                   <span
                     className={`text-sm ${
-                      style === s.value ? 'text-white font-semibold' : 'text-white'
+                      style === s.value ? 'font-semibold' : ''
                     }`}
+                    style={{ color: '#F5EFFF' }}
                   >
                     {s.label}
                   </span>
@@ -294,7 +299,8 @@ export default function VisionBoardPage() {
           {/* 뒤로가기 */}
           <button
             onClick={() => router.back()}
-            className="w-full mt-3 text-sm py-2 text-white hover:text-white/80 transition-colors"
+            className="w-full mt-3 text-sm py-2 transition-colors"
+            style={{ color: '#F5EFFF' }}
           >
             ← {t('button.back')}
           </button>

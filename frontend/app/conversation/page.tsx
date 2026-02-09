@@ -73,7 +73,7 @@ export default function ConversationPage() {
                 <span style={{ fontSize: '36px' }}>🚀</span>
               </div>
             </div>
-            <p className="text-white text-sm" style={{ marginBottom: '6px' }}>
+            <p className="text-sm" style={{ marginBottom: '6px', color: '#F5EFFF' }}>
               {t('conversation.loading')}
             </p>
             <div className="loading-dots">
@@ -93,7 +93,7 @@ export default function ConversationPage() {
         <StarsBackground />
         <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
           <div className="glass-hero rounded-3xl px-6 py-8 shadow-2xl text-center">
-            <p className="text-white text-sm mb-4">{error}</p>
+            <p className="text-sm mb-4" style={{ color: '#F5EFFF' }}>{error}</p>
             <button onClick={() => router.push('/onboarding')} className="btn-primary text-sm px-8 py-2.5">
               {t('conversation.restart')}
             </button>
@@ -122,12 +122,11 @@ export default function ConversationPage() {
           }}
         >
           <div className="flex items-center gap-3">
-            <span className="text-2xl">🚀</span>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">
+              <h1 className="text-lg font-bold tracking-tight" style={{ color: '#F5EFFF' }}>
                 {t('conversation.title')}
               </h1>
-              <p className="text-xs text-white">너의 우주를 함께 만들어가는 중 ✨</p>
+              <p className="text-xs" style={{ color: '#F5EFFF' }}>{t('conversation.subtitle')}</p>
             </div>
           </div>
           <button
@@ -135,7 +134,7 @@ export default function ConversationPage() {
             className="text-white hover:text-white/80 transition-colors text-sm px-4 py-2 rounded-full"
             style={{ background: 'rgba(255,255,255,0.06)' }}
           >
-            {t('button.close')} ✕
+            {t('button.home')}
           </button>
         </header>
 
