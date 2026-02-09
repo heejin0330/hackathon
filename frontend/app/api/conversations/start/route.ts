@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -15,9 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user info
-    const user = await prisma.user.findUnique({
-      where: { userId },
-    });
+    const user = memoryStore.getUser(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -27,12 +25,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new session
-    const session = await prisma.conversationSession.create({
-      data: {
-        userId,
-        status: 'in_progress',
-        language: user.language,
-      },
+    const session = memoryStore.createSession({
+      userId,
+      status: 'in_progress',
+      language: user.language,
     });
 
     // Generate first greeting message from AI
@@ -43,13 +39,11 @@ export async function POST(request: NextRequest) {
     );
 
     // Save first AI message
-    await prisma.conversationMessage.create({
-      data: {
-        sessionId: session.sessionId,
-        role: 'assistant',
-        content: firstMessageContent,
-        geminiMetadata: {},
-      },
+    memoryStore.addMessage({
+      sessionId: session.sessionId,
+      role: 'assistant',
+      content: firstMessageContent,
+      geminiMetadata: {},
     });
 
     return NextResponse.json({
@@ -68,4 +62,5 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 

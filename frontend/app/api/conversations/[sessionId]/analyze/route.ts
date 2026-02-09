@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -19,19 +19,9 @@ export async function POST(
     }
 
     // Verify session belongs to user
-    const session = await prisma.conversationSession.findFirst({
-      where: {
-        sessionId,
-        userId,
-      },
-      include: {
-        messages: {
-          orderBy: { timestamp: 'asc' },
-        },
-      },
-    });
+    const session = memoryStore.getSession(sessionId);
 
-    if (!session) {
+    if (!session || session.userId !== userId) {
       return NextResponse.json(
         { error: 'Session not found' },
         { status: 404 }
@@ -39,9 +29,7 @@ export async function POST(
     }
 
     // Get user info
-    const user = await prisma.user.findUnique({
-      where: { userId },
-    });
+    const user = memoryStore.getUser(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -50,8 +38,13 @@ export async function POST(
       );
     }
 
+    // Get messages
+    const messages = memoryStore.getMessages(sessionId).sort((a, b) => 
+      a.timestamp.getTime() - b.timestamp.getTime()
+    );
+
     // Convert messages to Gemini format
-    const geminiMessages = (session.messages || []).map((msg: any) => ({
+    const geminiMessages = messages.map((msg) => ({
       role: msg.role === 'user' ? ('user' as const) : ('assistant' as const),
       content: msg.content,
     }));
@@ -63,28 +56,23 @@ export async function POST(
     );
 
     // Save user profile
-    const profile = await prisma.userProfile.create({
-      data: {
-        userId,
-        sessionId: sessionId || null,
-        interests: analysis.interests || [],
-        strengths: analysis.strengths || [],
-        values: analysis.values || [],
-        learningStyle: analysis.learning_style || null,
-        motivationLevel: analysis.motivation_level || null,
-        careerPreferences: analysis.career_preferences || null,
-        mentalHealthFlags: analysis.mental_health_flags || [],
-        geminiAnalysisRaw: analysis,
-      },
+    const profile = memoryStore.createProfile({
+      userId,
+      sessionId: sessionId || null,
+      interests: analysis.interests || [],
+      strengths: analysis.strengths || [],
+      values: analysis.values || [],
+      learningStyle: analysis.learning_style || null,
+      motivationLevel: analysis.motivation_level || null,
+      careerPreferences: analysis.career_preferences || null,
+      mentalHealthFlags: analysis.mental_health_flags || [],
+      geminiAnalysisRaw: analysis,
     });
 
     // Update session status
-    await prisma.conversationSession.update({
-      where: { sessionId: sessionId },
-      data: {
-        status: 'completed',
-        completedAt: new Date(),
-      },
+    memoryStore.updateSession(sessionId, {
+      status: 'completed',
+      completedAt: new Date(),
     });
 
     return NextResponse.json({

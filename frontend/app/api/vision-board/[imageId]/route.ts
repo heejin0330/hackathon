@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
 export async function GET(
@@ -17,21 +17,22 @@ export async function GET(
       );
     }
 
-    const visionImage = await prisma.visionBoardImage.findFirst({
-      where: {
-        imageId,
-        userId,
-      },
-      include: {
-        recommendation: true,
-      },
-    });
+    const visionImage = memoryStore.getVisionBoard(imageId);
 
-    if (!visionImage) {
+    if (!visionImage || visionImage.userId !== userId) {
       return NextResponse.json(
         { error: 'Vision board not found' },
         { status: 404 }
       );
+    }
+
+    // Get career name from recommendation if available
+    let careerName = '';
+    if (visionImage.recommendationId) {
+      const recData = memoryStore.getRecommendationById(visionImage.recommendationId);
+      if (recData) {
+        careerName = recData.recommendation.careerName;
+      }
     }
 
     let visionData;
@@ -44,7 +45,7 @@ export async function GET(
     return NextResponse.json({
       image_id: visionImage.imageId,
       style: visionImage.style,
-      career_name: visionImage.recommendation?.careerName || '',
+      career_name: careerName,
       vision_data: visionData,
       generated_at: visionImage.generatedAt,
     });
@@ -56,4 +57,5 @@ export async function GET(
     );
   }
 }
+
 

@@ -70,10 +70,11 @@ export default function Home() {
               const isSelected = language === lang;
               const isHovered = hoveredLang === lang;
               const dotColor = LANG_COLORS[lang];
-              const enColor = LANG_COLORS['en'];
 
               // 선택된 언어의 자리에 영어 버튼 표시
               if (isSelected) {
+                const enColor = LANG_COLORS['en'] || '#34C759';
+                const isHoveringEnglish = hoveredLang === 'en';
                 return (
                   <button
                     key="en"
@@ -84,48 +85,35 @@ export default function Home() {
                       width: '48px',
                       height: '48px',
                       borderRadius: '50%',
-                      background: language === 'en'
-                        ? enColor
-                        : hoveredLang === 'en'
-                          ? `${enColor}80`
-                          : 'rgba(255, 255, 255, 0.08)',
-                      border: language === 'en'
-                        ? `2px solid ${enColor}`
-                        : '2px solid rgba(255, 255, 255, 0.15)',
+                      background: isHoveringEnglish
+                        ? `${enColor}80`
+                        : 'rgba(255, 255, 255, 0.08)',
+                      border: '2px solid rgba(255, 255, 255, 0.15)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      transform: hoveredLang === 'en' ? 'scale(1.1)' : 'scale(1)',
-                      boxShadow: language === 'en'
-                        ? `0 0 12px ${enColor}60`
-                        : hoveredLang === 'en'
-                          ? '0 4px 12px rgba(0, 0, 0, 0.3)'
-                          : 'none',
+                      transform: isHoveringEnglish ? 'scale(1.1)' : 'scale(1)',
+                      boxShadow: isHoveringEnglish
+                        ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                        : 'none',
                     }}
                     title={LANG_NAMES['en']}
                   >
-                    {language === 'en' ? (
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    ) : (
-                      <span
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: '#F5EFFF',
-                        }}
-                      >
-                        EN
-                      </span>
-                    )}
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#F5EFFF',
+                      }}
+                    >
+                      EN
+                    </span>
                   </button>
                 );
               }
 
-              // 선택되지 않은 언어 버튼
               return (
                 <button
                   key={lang}
@@ -136,34 +124,73 @@ export default function Home() {
                     width: '48px',
                     height: '48px',
                     borderRadius: '50%',
-                    background: isHovered
-                      ? `${dotColor}80`
-                      : 'rgba(255, 255, 255, 0.08)',
-                    border: '2px solid rgba(255, 255, 255, 0.15)',
+                    background: isSelected
+                      ? dotColor
+                      : isHovered
+                        ? `${dotColor}80`
+                        : 'rgba(255, 255, 255, 0.08)',
+                    border: isSelected
+                      ? `2px solid ${dotColor}`
+                      : '2px solid rgba(255, 255, 255, 0.15)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-                    boxShadow: isHovered
-                      ? '0 4px 12px rgba(0, 0, 0, 0.3)'
-                      : 'none',
+                    boxShadow: isSelected
+                      ? `0 0 12px ${dotColor}60`
+                      : isHovered
+                        ? '0 4px 12px rgba(0, 0, 0, 0.3)'
+                        : 'none',
                   }}
                   title={LANG_NAMES[lang]}
                 >
-                  <span
-                    style={{
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#F5EFFF',
-                    }}
-                  >
-                    {lang === 'ko' ? '한' : lang === 'es' ? 'ES' : '日'}
-                  </span>
+                  {isSelected ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  ) : (
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#F5EFFF',
+                      }}
+                    >
+                      {lang === 'ko' ? '한' : lang === 'es' ? 'ES' : '日'}
+                    </span>
+                  )}
                 </button>
               );
             })}
+            {language === 'en' && (
+              <button
+                key="en"
+                onClick={() => handleSelectLanguage('en')}
+                onMouseEnter={() => setHoveredLang('en')}
+                onMouseLeave={() => setHoveredLang(null)}
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '50%',
+                  background: LANG_COLORS['en'] || '#34C759',
+                  border: `2px solid ${LANG_COLORS['en'] || '#34C759'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  transform: hoveredLang === 'en' ? 'scale(1.1)' : 'scale(1)',
+                  boxShadow: `0 0 12px ${LANG_COLORS['en'] || '#34C759'}60`,
+                }}
+                title={LANG_NAMES['en']}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -19,14 +19,9 @@ export async function GET(
     }
 
     // Get profile
-    const profile = await prisma.userProfile.findFirst({
-      where: {
-        profileId: profileId,
-        userId: userId,
-      },
-    });
+    const profile = memoryStore.getProfile(profileId);
 
-    if (!profile) {
+    if (!profile || profile.userId !== userId) {
       return NextResponse.json(
         { error: 'Profile not found' },
         { status: 404 }
@@ -34,16 +29,13 @@ export async function GET(
     }
 
     // Check if recommendations already exist
-    let recommendations = await prisma.careerRecommendation.findMany({
-      where: { profileId: profileId },
-      orderBy: { displayOrder: 'asc' },
-    });
+    let recommendations = memoryStore.getRecommendations(profileId).sort((a, b) => 
+      (a.displayOrder || 0) - (b.displayOrder || 0)
+    );
 
     // If no recommendations, generate them
     if (recommendations.length === 0) {
-      const user = await prisma.user.findUnique({
-        where: { userId },
-      });
+      const user = memoryStore.getUser(userId);
 
       if (!user) {
         return NextResponse.json(
@@ -68,20 +60,18 @@ export async function GET(
       // Save recommendations
       for (let i = 0; i < geminiRecommendations.length; i++) {
         const rec = geminiRecommendations[i];
-        const saved = await prisma.careerRecommendation.create({
-          data: {
-            profileId: profileId,
-            careerPathId: `path_${i + 1}`,
-            careerName: rec.career_name,
-            description: rec.description,
-            matchReason: rec.match_reason,
-            skillsNeeded: rec.skills_needed || [],
-            exampleJobs: rec.example_jobs || [],
-            educationPath: rec.education_path,
-            growthPotential: rec.growth_potential,
-            isCustom: false,
-            displayOrder: i + 1,
-          },
+        const saved = memoryStore.addRecommendation({
+          profileId: profileId,
+          careerPathId: `path_${i + 1}`,
+          careerName: rec.career_name,
+          description: rec.description,
+          matchReason: rec.match_reason,
+          skillsNeeded: rec.skills_needed || [],
+          exampleJobs: rec.example_jobs || [],
+          educationPath: rec.education_path,
+          growthPotential: rec.growth_potential,
+          isCustom: false,
+          displayOrder: i + 1,
         });
         recommendations.push(saved);
       }
@@ -92,12 +82,12 @@ export async function GET(
         recommendation_id: rec.recommendationId,
         career_path_id: rec.careerPathId,
         career_name: rec.careerName,
-        description: rec.description,
-        match_reason: rec.matchReason,
+        description: rec.description || '',
+        match_reason: rec.matchReason || '',
         skills_needed: rec.skillsNeeded,
         example_jobs: rec.exampleJobs,
-        education_path: rec.educationPath,
-        growth_potential: rec.growthPotential,
+        education_path: rec.educationPath || '',
+        growth_potential: rec.growthPotential || '',
         is_custom: rec.isCustom,
       })),
     });

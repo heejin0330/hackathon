@@ -62,6 +62,13 @@ const translations = {
     'conversation.error.start': '대화를 시작할 수 없습니다',
     'conversation.error.analyze': '분석 중 오류가 발생했습니다',
     'conversation.restart': '다시 시작하기',
+    'conversation.user.label': '나 🚀',
+    'conversation.pathfinder.label': '패스파인더 🌌',
+    'conversation.progress.start': '대화를 시작해볼까요?',
+    'conversation.progress.almost': '거의 다 왔어요!',
+    'conversation.progress.good': '잘하고 있어요!',
+    'conversation.progress.half': '절반 넘었어요!',
+    'conversation.progress.starting': '좋은 출발이에요!',
     
     // Recommendations
     'recommendations.title': '당신의 우주가 준비되었습니다',
@@ -100,6 +107,7 @@ const translations = {
     'conversation.voice.speaking': '말씀하세요...',
     'conversation.voice.autoOn': 'AI 음성 출력 켜기',
     'conversation.voice.autoOff': 'AI 음성 출력 끄기',
+    'conversation.voice.input': '🎤 음성 입력',
     
     // Vision Board
     'visionBoard.title': '미래의 나',
@@ -175,6 +183,13 @@ const translations = {
     'conversation.error.start': 'Failed to start conversation',
     'conversation.error.analyze': 'Error occurred during analysis',
     'conversation.restart': 'Start Over',
+    'conversation.user.label': 'Me 🚀',
+    'conversation.pathfinder.label': 'Pathfinder 🌌',
+    'conversation.progress.start': 'Shall we start a conversation?',
+    'conversation.progress.almost': 'Almost there!',
+    'conversation.progress.good': "You're doing great!",
+    'conversation.progress.half': 'More than halfway!',
+    'conversation.progress.starting': 'Great start!',
     
     // Recommendations
     'recommendations.title': 'Your Universe is Ready',
@@ -213,6 +228,7 @@ const translations = {
     'conversation.voice.speaking': 'Speak now...',
     'conversation.voice.autoOn': 'Enable AI voice',
     'conversation.voice.autoOff': 'Disable AI voice',
+    'conversation.voice.input': '🎤 Voice input',
     
     // Vision Board
     'visionBoard.title': 'Future Me',
@@ -288,6 +304,13 @@ const translations = {
     'conversation.error.start': 'Error al iniciar conversación',
     'conversation.error.analyze': 'Error durante el análisis',
     'conversation.restart': 'Empezar de Nuevo',
+    'conversation.user.label': 'Yo 🚀',
+    'conversation.pathfinder.label': 'Pathfinder 🌌',
+    'conversation.progress.start': '¿Empecemos una conversación?',
+    'conversation.progress.almost': '¡Casi terminamos!',
+    'conversation.progress.good': '¡Lo estás haciendo bien!',
+    'conversation.progress.half': '¡Más de la mitad!',
+    'conversation.progress.starting': '¡Buen comienzo!',
     
     // Recommendations
     'recommendations.title': 'Tu Universo Está Listo',
@@ -326,6 +349,7 @@ const translations = {
     'conversation.voice.speaking': 'Habla ahora...',
     'conversation.voice.autoOn': 'Activar voz de IA',
     'conversation.voice.autoOff': 'Desactivar voz de IA',
+    'conversation.voice.input': '🎤 Entrada de voz',
     
     // Vision Board
     'visionBoard.title': 'Mi Futuro',
@@ -401,6 +425,13 @@ const translations = {
     'conversation.error.start': '会話を開始できませんでした',
     'conversation.error.analyze': '分析中にエラーが発生しました',
     'conversation.restart': '最初からやり直す',
+    'conversation.user.label': '私 🚀',
+    'conversation.pathfinder.label': 'パスファインダー 🌌',
+    'conversation.progress.start': '会話を始めましょうか？',
+    'conversation.progress.almost': 'もうすぐです！',
+    'conversation.progress.good': 'よくやっています！',
+    'conversation.progress.half': '半分を超えました！',
+    'conversation.progress.starting': '良いスタートです！',
     
     // Recommendations
     'recommendations.title': 'あなたの宇宙が準備できました',
@@ -439,6 +470,7 @@ const translations = {
     'conversation.voice.speaking': '話してください...',
     'conversation.voice.autoOn': 'AI音声をオンにする',
     'conversation.voice.autoOff': 'AI音声をオフにする',
+    'conversation.voice.input': '🎤 音声入力',
     
     // Vision Board
     'visionBoard.title': '未来の自分',

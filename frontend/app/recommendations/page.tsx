@@ -23,8 +23,18 @@ export default function RecommendationsPage() {
   const [addingCustom, setAddingCustom] = useState(false);
 
   useEffect(() => {
-    if (!profileId) {
-      setError(t('recommendations.error.profile'));
+    // URL에서 profileId 가져오기
+    const urlProfileId = searchParams.get('profileId');
+    
+    // URL에 없으면 localStorage에서 가져오기 (세션 만료 대비)
+    const storedProfileId = typeof window !== 'undefined' 
+      ? localStorage.getItem('lastProfileId')
+      : null;
+    
+    const finalProfileId = urlProfileId || storedProfileId;
+    
+    if (!finalProfileId) {
+      setError(t('recommendations.error.profile') || '프로필 ID가 필요합니다. 대화를 완료해주세요.');
       setLoading(false);
       return;
     }
@@ -32,17 +42,28 @@ export default function RecommendationsPage() {
     const fetchRecommendations = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.getRecommendations(profileId);
+        setError(null);
+        const response = await apiClient.getRecommendations(finalProfileId);
         setRecommendations(response.recommendations);
       } catch (err: any) {
-        setError(err.message || t('recommendations.error.load'));
+        const errorMessage = err.message || t('recommendations.error.load');
+        if (errorMessage.includes('Profile not found') || errorMessage.includes('profile not found')) {
+          setError('프로필을 찾을 수 없습니다. 대화를 완료하고 분석을 진행해주세요.');
+          // localStorage 정리
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('lastProfileId');
+            localStorage.removeItem('lastProfileTimestamp');
+          }
+        } else {
+          setError(errorMessage);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [profileId, t]);
+  }, [profileId, t, searchParams]);
 
   const handleSelectCareer = (recommendationId: string) => {
     setSelectedCareers((prev) => {
@@ -101,9 +122,14 @@ export default function RecommendationsPage() {
         <div className="relative z-10 w-full mx-auto px-5" style={{ maxWidth: '480px' }}>
           <div className="glass-hero rounded-3xl px-6 py-8 shadow-2xl text-center">
             <p className="text-sm mb-4" style={{ color: '#F5EFFF' }}>{error}</p>
-            <button onClick={() => router.push('/')} className="btn-primary text-sm px-8 py-2.5">
-              {t('button.back')}
-            </button>
+            <div className="flex flex-col gap-2">
+              <button onClick={() => router.push('/conversation')} className="btn-primary text-sm px-8 py-2.5">
+                대화 다시 시작하기
+              </button>
+              <button onClick={() => router.push('/')} className="text-sm px-8 py-2.5" style={{ color: '#F5EFFF', opacity: 0.7 }}>
+                {t('button.back')}
+              </button>
+            </div>
           </div>
         </div>
       </div>

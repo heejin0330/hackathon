@@ -231,8 +231,8 @@ export default function VisionBoardPage() {
           {error && (
             <div
               className="text-sm mb-4"
-              style={{ color: '#F5EFFF' }}
               style={{
+                color: '#F5EFFF',
                 background: 'rgba(255, 59, 48, 0.15)',
                 padding: '10px 14px',
                 borderRadius: '12px',

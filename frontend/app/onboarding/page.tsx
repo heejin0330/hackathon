@@ -43,6 +43,12 @@ export default function OnboardingPage() {
         return;
       }
 
+      if (!formData.language) {
+        setError('언어를 선택해주세요');
+        setLoading(false);
+        return;
+      }
+
       const response = await apiClient.createUser({
         nickname: formData.nickname.trim(),
         age: formData.age,
@@ -81,8 +87,8 @@ export default function OnboardingPage() {
             {error && (
               <div
                 className="text-sm"
-                style={{ color: '#F5EFFF' }}
                 style={{
+                  color: '#F5EFFF',
                   background: 'rgba(255, 59, 48, 0.15)',
                   padding: '10px 14px',
                   borderRadius: '12px',

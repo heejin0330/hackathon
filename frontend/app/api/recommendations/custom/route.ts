@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -24,14 +24,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify profile belongs to user
-    const profile = await prisma.userProfile.findFirst({
-      where: {
-        profileId: profile_id,
-        userId,
-      },
-    });
+    const profile = memoryStore.getProfile(profile_id);
 
-    if (!profile) {
+    if (!profile || profile.userId !== userId) {
       return NextResponse.json(
         { error: 'Profile not found' },
         { status: 404 }
@@ -39,9 +34,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user info
-    const user = await prisma.user.findUnique({
-      where: { userId },
-    });
+    const user = memoryStore.getUser(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -100,28 +93,25 @@ Respond ONLY with valid JSON, no additional text.`;
       const customCareer = JSON.parse(jsonText);
 
       // Get next display order
-      const maxOrder = await prisma.careerRecommendation.findFirst({
-        where: { profileId: profile_id as string },
-        orderBy: { displayOrder: 'desc' },
-      });
-
-      const nextOrder = (maxOrder?.displayOrder || 0) + 1;
+      const existingRecs = memoryStore.getRecommendations(profile_id);
+      const maxOrder = existingRecs.length > 0 
+        ? Math.max(...existingRecs.map(r => r.displayOrder || 0))
+        : 0;
+      const nextOrder = maxOrder + 1;
 
       // Save custom career
-      const recommendation = await prisma.careerRecommendation.create({
-        data: {
-          profileId: profile_id as string,
-          careerPathId: `custom_${Date.now()}`,
-          careerName: customCareer.career_name,
-          description: customCareer.description,
-          matchReason: customCareer.match_reason,
-          skillsNeeded: customCareer.skills_needed || [],
-          exampleJobs: customCareer.example_jobs || [],
-          educationPath: customCareer.education_path,
-          growthPotential: customCareer.growth_potential,
-          isCustom: true,
-          displayOrder: nextOrder,
-        },
+      const recommendation = memoryStore.addRecommendation({
+        profileId: profile_id as string,
+        careerPathId: `custom_${Date.now()}`,
+        careerName: customCareer.career_name,
+        description: customCareer.description,
+        matchReason: customCareer.match_reason,
+        skillsNeeded: customCareer.skills_needed || [],
+        exampleJobs: customCareer.example_jobs || [],
+        educationPath: customCareer.education_path,
+        growthPotential: customCareer.growth_potential,
+        isCustom: true,
+        displayOrder: nextOrder,
       });
 
       return NextResponse.json({
@@ -151,4 +141,5 @@ Respond ONLY with valid JSON, no additional text.`;
     );
   }
 }
+
 

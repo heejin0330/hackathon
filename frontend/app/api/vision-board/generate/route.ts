@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -98,32 +98,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const recommendation = await prisma.careerRecommendation.findUnique({
-      where: { recommendationId: recommendation_id },
-      include: {
-        profile: {
-          include: {
-            user: true,
-          },
-        },
-      },
-    });
-
-    if (!recommendation) {
+    // Find recommendation
+    const recData = memoryStore.getRecommendationById(recommendation_id);
+    
+    if (!recData) {
       return NextResponse.json(
         { error: 'Recommendation not found' },
         { status: 404 }
       );
     }
 
-    if (recommendation.profile.userId !== userId) {
+    const recommendation = recData.recommendation;
+    const profile = memoryStore.getProfile(recData.profileId);
+    const user = memoryStore.getUser(userId);
+
+    if (!profile || !user) {
+      return NextResponse.json(
+        { error: 'Profile or user not found' },
+        { status: 404 }
+      );
+    }
+
+    if (profile.userId !== userId) {
       return NextResponse.json(
         { error: 'Forbidden' },
         { status: 403 }
       );
     }
 
-    const user = recommendation.profile.user;
     const careerName = recommendation.careerName;
     const exampleJob = recommendation.exampleJobs[0] || careerName;
 
@@ -154,9 +156,9 @@ Include:
 5. What their typical work day looks like
 
 User profile:
-- Interests: ${recommendation.profile.interests.join(', ')}
-- Strengths: ${recommendation.profile.strengths.join(', ')}
-- Values: ${recommendation.profile.values.join(', ')}
+- Interests: ${profile.interests.join(', ')}
+- Strengths: ${profile.strengths.join(', ')}
+- Values: ${profile.values.join(', ')}
 
 Respond in JSON format:
 {
@@ -186,15 +188,11 @@ Respond ONLY with valid JSON.`;
 
       const visionData = JSON.parse(jsonText);
 
-      const visionImage = await prisma.visionBoardImage.create({
-        data: {
-          userId,
-          recommendationId: recommendation_id,
-          style,
-          imageUrl: JSON.stringify(visionData),
-          geminiPrompt: prompt,
-          safetyCheckPassed: true,
-        },
+      const visionImage = memoryStore.addVisionBoard({
+        userId,
+        recommendationId: recommendation_id,
+        style,
+        imageUrl: JSON.stringify(visionData),
       });
 
       return NextResponse.json({
@@ -219,4 +217,5 @@ Respond ONLY with valid JSON.`;
     );
   }
 }
+
 

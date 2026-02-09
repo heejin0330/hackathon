@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
 export async function GET(request: NextRequest) {
@@ -13,16 +13,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const visionImages = await prisma.visionBoardImage.findMany({
-      where: { userId },
-      include: {
-        recommendation: true,
-      },
-      orderBy: { generatedAt: 'desc' },
-    });
+    const visionImages = memoryStore.getVisionBoards(userId).sort((a, b) => 
+      b.generatedAt.getTime() - a.generatedAt.getTime()
+    );
 
     return NextResponse.json({
       vision_boards: visionImages.map((img) => {
+        // Get career name from recommendation if available
+        let careerName = '';
+        if (img.recommendationId) {
+          const recData = memoryStore.getRecommendationById(img.recommendationId);
+          if (recData) {
+            careerName = recData.recommendation.careerName;
+          }
+        }
+
         let visionData;
         try {
           visionData = JSON.parse(img.imageUrl);
@@ -33,7 +38,7 @@ export async function GET(request: NextRequest) {
         return {
           image_id: img.imageId,
           style: img.style,
-          career_name: img.recommendation?.careerName || '',
+          career_name: careerName,
           vision_data: visionData,
           generated_at: img.generatedAt,
         };

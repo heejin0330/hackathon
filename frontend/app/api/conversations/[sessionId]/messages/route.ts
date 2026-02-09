@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { geminiService } from '@/lib/services/gemini.service';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
@@ -28,14 +28,9 @@ export async function POST(
     }
 
     // Verify session belongs to user
-    const session = await prisma.conversationSession.findFirst({
-      where: {
-        sessionId,
-        userId,
-      },
-    });
+    const session = memoryStore.getSession(sessionId);
 
-    if (!session) {
+    if (!session || session.userId !== userId) {
       return NextResponse.json(
         { error: 'Session not found' },
         { status: 404 }
@@ -43,9 +38,7 @@ export async function POST(
     }
 
     // Get user info
-    const user = await prisma.user.findUnique({
-      where: { userId },
-    });
+    const user = memoryStore.getUser(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -55,20 +48,17 @@ export async function POST(
     }
 
     // Save user message
-    await prisma.conversationMessage.create({
-      data: {
-        sessionId,
-        role: 'user',
-        content,
-        inputMethod: input_method || 'text',
-      },
+    memoryStore.addMessage({
+      sessionId,
+      role: 'user',
+      content,
+      inputMethod: input_method || 'text',
     });
 
     // Get conversation history
-    const messages = await prisma.conversationMessage.findMany({
-      where: { sessionId },
-      orderBy: { timestamp: 'asc' },
-    });
+    const messages = memoryStore.getMessages(sessionId).sort((a, b) => 
+      a.timestamp.getTime() - b.timestamp.getTime()
+    );
 
     // Convert to Gemini format
     const geminiMessages = messages.map((msg) => ({
@@ -87,18 +77,22 @@ export async function POST(
     );
 
     // Save AI message
-    await prisma.conversationMessage.create({
-      data: {
-        sessionId,
-        role: 'assistant',
-        content: aiResponse.content,
-        geminiMetadata: aiResponse.metadata || {},
-      },
+    memoryStore.addMessage({
+      sessionId,
+      role: 'assistant',
+      content: aiResponse.content,
+      geminiMetadata: aiResponse.metadata || {},
     });
 
-    // Calculate progress (rough estimate based on message count)
-    const messageCount = messages.length + 2; // +2 for the new messages
-    const estimatedProgress = Math.min(messageCount / 20, 1.0); // ~20 messages for full conversation
+    // Calculate progress (AI 메시지 저장 후 다시 카운트)
+    const allMessages = memoryStore.getMessages(sessionId);
+    const messageCount = allMessages.length;
+    
+    // 제곱근을 사용하면 초반에는 빠르게, 후반에는 천천히 증가
+    // 최소 40개 메시지 이상 대화해야 완료 (최대 95%까지만)
+    // 초기 인사 메시지 1개 + 사용자/AI 메시지 쌍 = 2개씩 증가
+    // 20번 대화 = 40개 메시지 = 약 95% 진행도
+    const estimatedProgress = Math.min(Math.sqrt(messageCount / 40), 0.95);
 
     return NextResponse.json({
       message_id: 'generated',

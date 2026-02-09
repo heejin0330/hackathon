@@ -29,6 +29,9 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // 언어 기본값 설정 (null이면 'en' 사용)
+  const currentLanguage = language || 'en';
+
   // 음성 인식 훅
   const {
     isListening,
@@ -38,7 +41,7 @@ export default function ChatInterface({
     stopListening,
     resetTranscript,
     isSupported: isSTTSupported,
-  } = useSpeechRecognition(language);
+  } = useSpeechRecognition(currentLanguage);
 
   // 음성 합성 훅
   const {
@@ -46,7 +49,7 @@ export default function ChatInterface({
     cancel: cancelSpeak,
     isSpeaking,
     isSupported: isTTSSupported,
-  } = useSpeechSynthesis(language);
+  } = useSpeechSynthesis(currentLanguage);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -208,9 +211,12 @@ export default function ChatInterface({
               speak(cleanText);
             }
             
-            // 대화 완료 체크
-            if (response.progress >= 1.0) {
-              onComplete?.();
+            // 대화 완료 체크 (0.95 이상일 때만 완료로 간주)
+            if (response.progress >= 0.95) {
+              // 약간의 딜레이를 두고 완료 처리 (사용자가 마지막 메시지를 볼 수 있도록)
+              setTimeout(() => {
+                onComplete?.();
+              }, 1000);
             }
             
             // 로딩 상태 해제
@@ -226,9 +232,12 @@ export default function ChatInterface({
         inputRef.current?.focus();
       }
 
-      // 대화 완료 체크
-      if (response.progress >= 1.0) {
-        onComplete?.();
+      // 대화 완료 체크 (0.95 이상일 때만 완료로 간주)
+      if (response.progress >= 0.95) {
+        // 약간의 딜레이를 두고 완료 처리
+        setTimeout(() => {
+          onComplete?.();
+        }, 1000);
       }
     } catch (error: any) {
       console.error('Error sending message:', error);
@@ -275,11 +284,11 @@ export default function ChatInterface({
   };
 
   const getProgressLabel = () => {
-    if (progress >= 0.8) return '거의 다 왔어요!';
-    if (progress >= 0.6) return '잘하고 있어요!';
-    if (progress >= 0.4) return '절반 넘었어요!';
-    if (progress >= 0.2) return '좋은 출발이에요!';
-    return '대화를 시작해볼까요?';
+    if (progress >= 0.8) return t('conversation.progress.almost');
+    if (progress >= 0.6) return t('conversation.progress.good');
+    if (progress >= 0.4) return t('conversation.progress.half');
+    if (progress >= 0.2) return t('conversation.progress.starting');
+    return t('conversation.progress.start');
   };
 
   return (
@@ -323,7 +332,7 @@ export default function ChatInterface({
                     className={`text-xs mb-2 font-medium ${isUser ? 'text-right' : 'text-left'}`}
                     style={{ color: 'rgba(255, 255, 255, 0.7)' }}
                   >
-                    {isUser ? '나 🚀' : '패스파인더 🌌'}
+                    {isUser ? t('conversation.user.label') : t('conversation.pathfinder.label')}
                   </p>
 
                   <div
@@ -351,7 +360,7 @@ export default function ChatInterface({
                         className="text-xs mb-2 block font-medium opacity-80"
                         style={{ color: 'rgba(255, 255, 255, 0.9)' }}
                       >
-                        🎤 음성 입력
+                        {t('conversation.voice.input')}
                       </span>
                     )}
 

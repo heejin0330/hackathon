@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { getUserIdFromRequest } from '@/lib/utils/auth';
 
 export async function GET(request: NextRequest) {
@@ -13,19 +13,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const user = await prisma.user.findUnique({
-      where: { userId },
-      select: {
-        userId: true,
-        nickname: true,
-        age: true,
-        language: true,
-        country: true,
-        preferredInputMethod: true,
-        createdAt: true,
-        lastActive: true,
-      },
-    });
+    const user = memoryStore.getUser(userId);
 
     if (!user) {
       return NextResponse.json(
@@ -34,7 +22,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(user);
+    return NextResponse.json({
+      userId: user.userId,
+      nickname: user.nickname,
+      age: user.age,
+      language: user.language,
+      country: user.country,
+      preferredInputMethod: user.preferredInputMethod,
+      createdAt: user.createdAt,
+      lastActive: user.lastActive,
+    });
   } catch (error: any) {
     console.error('Error fetching user:', error);
     return NextResponse.json(
@@ -43,4 +40,5 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
 

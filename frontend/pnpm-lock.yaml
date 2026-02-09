@@ -11,9 +11,6 @@ importers:
       '@google/generative-ai':
         specifier: ^0.24.1
         version: 0.24.1
-      '@prisma/client':
-        specifier: 6.0.0
-        version: 6.0.0(prisma@6.0.0)
       '@react-three/drei':
         specifier: ^10.7.7
         version: 10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.13)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(three@0.182.0))(@types/react@19.2.13)(@types/three@0.182.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(three@0.182.0)
@@ -26,9 +23,6 @@ importers:
       next:
         specifier: 16.1.6
         version: 16.1.6(@babel/core@7.29.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      prisma:
-        specifier: 6.0.0
-        version: 6.0.0
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -456,30 +450,6 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
-
-  '@prisma/client@6.0.0':
-    resolution: {integrity: sha512-tOBhG35ozqZ/5Y6B0TNOa6cwULUW8ijXqBXcgb12bfozqf6eGMyGs+jphywCsj6uojv5lAZZnxVSoLMVebIP+g==}
-    engines: {node: '>=18.18'}
-    peerDependencies:
-      prisma: '*'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-
-  '@prisma/debug@6.0.0':
-    resolution: {integrity: sha512-eUjoNThlDXdyJ1iQ2d7U6aTVwm59EwvODb5zFVNJEokNoSiQmiYWNzZIwZyDmZ+j51j42/0iTaHIJ4/aZPKFRg==}
-
-  '@prisma/engines-version@5.23.0-27.5dbef10bdbfb579e07d35cc85fb1518d357cb99e':
-    resolution: {integrity: sha512-JmIds0Q2/vsOmnuTJYxY4LE+sajqjYKhLtdOT6y4imojqv5d/aeVEfbBGC74t8Be1uSp0OP8lxIj2OqoKbLsfQ==}
-
-  '@prisma/engines@6.0.0':
-    resolution: {integrity: sha512-ZZCVP3q22ifN6Ex6C8RIcTDBlRtMJS2H1ljV0knCiWNGArvvkEbE88W3uDdq/l4+UvyvHpGzdf9ZsCWSQR7ZQQ==}
-
-  '@prisma/fetch-engine@6.0.0':
-    resolution: {integrity: sha512-j2m+iO5RDPRI7SUc7sHo8wX7SA4iTkJ+18Sxch8KinQM46YiCQD1iXKN6qU79C1Fliw5Bw/qDyTHaTsa3JMerA==}
-
-  '@prisma/get-platform@6.0.0':
-    resolution: {integrity: sha512-PS6nYyIm9g8C03E4y7LknOfdCw/t2KyEJxntMPQHQZCOUgOpF82Ma60mdlOD08w90I3fjLiZZ0+MadenR3naDQ==}
 
   '@react-three/drei@10.7.7':
     resolution: {integrity: sha512-ff+J5iloR0k4tC++QtD/j9u3w5fzfgFAWDtAGQah9pF2B1YgOq/5JxqY0/aVoQG5r3xSZz0cv5tk2YuBob4xEQ==}
@@ -1336,11 +1306,6 @@ packages:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
 
-  fsevents@2.3.3:
-    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
@@ -2049,11 +2014,6 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
-
-  prisma@6.0.0:
-    resolution: {integrity: sha512-RX7KtbW7IoEByf7MR32JK1PkVYLVYFqeODTtiIX3cqekq1aKdsF3Eud4zp2sUShMLjvdb5Jow0LbUjRq5LVxPw==}
-    engines: {node: '>=18.18'}
-    hasBin: true
 
   promise-worker-transferable@1.0.4:
     resolution: {integrity: sha512-bN+0ehEnrXfxV2ZQvU2PetO0n4gqBD4ulq3MI1WOPLgr7/Mg9yRQkX5+0v1vagr74ZTsl7XtzlaYDo2EuCeYJw==}
@@ -2893,31 +2853,6 @@ snapshots:
       fastq: 1.20.1
 
   '@nolyfill/is-core-module@1.0.39': {}
-
-  '@prisma/client@6.0.0(prisma@6.0.0)':
-    optionalDependencies:
-      prisma: 6.0.0
-
-  '@prisma/debug@6.0.0': {}
-
-  '@prisma/engines-version@5.23.0-27.5dbef10bdbfb579e07d35cc85fb1518d357cb99e': {}
-
-  '@prisma/engines@6.0.0':
-    dependencies:
-      '@prisma/debug': 6.0.0
-      '@prisma/engines-version': 5.23.0-27.5dbef10bdbfb579e07d35cc85fb1518d357cb99e
-      '@prisma/fetch-engine': 6.0.0
-      '@prisma/get-platform': 6.0.0
-
-  '@prisma/fetch-engine@6.0.0':
-    dependencies:
-      '@prisma/debug': 6.0.0
-      '@prisma/engines-version': 5.23.0-27.5dbef10bdbfb579e07d35cc85fb1518d357cb99e
-      '@prisma/get-platform': 6.0.0
-
-  '@prisma/get-platform@6.0.0':
-    dependencies:
-      '@prisma/debug': 6.0.0
 
   '@react-three/drei@10.7.7(@react-three/fiber@9.5.0(@types/react@19.2.13)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(three@0.182.0))(@types/react@19.2.13)(@types/three@0.182.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(three@0.182.0)':
     dependencies:
@@ -3933,9 +3868,6 @@ snapshots:
     dependencies:
       is-callable: 1.2.7
 
-  fsevents@2.3.3:
-    optional: true
-
   function-bind@1.1.2: {}
 
   function.prototype.name@1.1.8:
@@ -4779,12 +4711,6 @@ snapshots:
   potpack@1.0.2: {}
 
   prelude-ls@1.2.1: {}
-
-  prisma@6.0.0:
-    dependencies:
-      '@prisma/engines': 6.0.0
-    optionalDependencies:
-      fsevents: 2.3.3
 
   promise-worker-transferable@1.0.4:
     dependencies:

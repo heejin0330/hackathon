@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/utils/prisma';
+import { memoryStore } from '@/lib/utils/memory-store';
 import { generateToken } from '@/lib/utils/jwt';
 import { geminiService } from '@/lib/services/gemini.service';
 
@@ -58,29 +58,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create user
-    console.log('Creating user in database...');
-    console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set (hidden)' : 'NOT SET');
+    // Create user (메모리 저장소 사용)
+    console.log('Creating user in memory store...');
     
-    let user;
-    try {
-      user = await prisma.user.create({
-        data: {
-          nickname,
-          age,
-          language,
-          country: country || null,
-          preferredInputMethod: preferredInputMethod || null,
-          lastActive: new Date(),
-        },
-      });
-      console.log('User created:', user.userId);
-    } catch (dbError: any) {
-      console.error('Database error:', dbError);
-      console.error('Error code:', dbError.code);
-      console.error('Error meta:', dbError.meta);
-      throw new Error(`Database error: ${dbError.message || 'Unknown database error'}`);
-    }
+    const user = memoryStore.createUser({
+      nickname,
+      age,
+      language,
+      country: country || null,
+      preferredInputMethod: preferredInputMethod || null,
+    });
+    console.log('User created:', user.userId);
 
     // Generate JWT token
     console.log('Generating JWT token...');
